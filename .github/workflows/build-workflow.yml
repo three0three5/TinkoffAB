@@ -1,0 +1,25 @@
+name: build-workflow
+run-name: ${{ github.actor }} ${{ github.event_name }}
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      docker-tag: orobtsovv/demo-image:${{ github.ref_name }}-${GITHUB_SHA::8}
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Run Maven clean install
+        run: mvn clean install
+      - name: Build Docker image with tag ${{ env.docker-tag }}
+        run: docker build --tag ${{ env.docker-tag }} .
