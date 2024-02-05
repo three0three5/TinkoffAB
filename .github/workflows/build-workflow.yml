@@ -36,7 +36,8 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-
+      - name: Echo docker images
+        run: docker images
       - name: Push the Docker image
         run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/demo-image:${{ env.docker-tag }}
 
