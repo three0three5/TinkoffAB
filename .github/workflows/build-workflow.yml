@@ -22,11 +22,6 @@ jobs:
 
       - name: Run Maven clean install
         run: mvn clean install
-      - name: Upload artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: java-maven-project
-          path: target/*.jar
 
 
   deploy:
@@ -34,11 +29,6 @@ jobs:
     needs: build
 
     steps:
-      - name: Download artifact
-        uses: actions/download-artifact@v2
-        with:
-          name: java-maven-project
-          path: .
       - name: Build Docker image
         run: docker build --tag ${{ secrets.DOCKERHUB_USERNAME }}/demo-image:${{ env.docker-tag }} .
       - name: Login to Docker Hub
@@ -46,8 +36,6 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - name: Echo docker images
-        run: docker images
       - name: Push the Docker image
         run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/demo-image:${{ env.docker-tag }}
 
