@@ -1,0 +1,34 @@
+name: run-workflow
+run-name: ${{ github.actor }} ${{ github.event_name }}
+on:
+  workflow_dispatch:
+    inputs:
+      docker-tag:
+        description: 'Docker image tag'
+        required: false
+        default: 'latest'
+        type: string
+
+      first-num:
+        description: 'First number'
+        required: true
+        type: number
+
+      second-num:
+        description: 'Second number'
+        required: true
+        type: number
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    env:
+      docker-tag: ${{ github.event.inputs.docker-tag }}
+      first-num: ${{ github.event.inputs.first-num }}
+      second-num: ${{ github.event.inputs.second-num }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Docker image pull and run
+        run: |
+          docker pull ${{ env.docker-tag }}
+          docker run ${{ env.docker-tag }} ${{ env.first-num }} ${{ env.second-num }}
