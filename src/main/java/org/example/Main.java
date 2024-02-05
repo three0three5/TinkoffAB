@@ -10,7 +10,7 @@ public class Main {
             System.out.println(Arrays.stream(nums).sum());
         } catch (IllegalArgumentException e) {
             raiseError(e);
-        }
+        } // changes
     }
 
     private static void raiseError(Exception e) {
