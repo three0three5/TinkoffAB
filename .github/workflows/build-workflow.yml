@@ -7,7 +7,7 @@ on:
     branches: [ "main" ]
 
 env:
-  docker-tag: ${GITHUB_REF##*/}-${GITHUB_SHA::7}
+  docker-tag: ${{ github.head_ref || github.ref_name }} -${GITHUB_SHA::7}
 
 jobs:
   build:
@@ -33,8 +33,9 @@ jobs:
       - name: Push the Docker image
         run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/demo-image:${{ env.docker-tag }}
 
-        if: github.ref == 'refs/heads/main'
       - name: Build Docker image
         run: docker build --tag ${{ secrets.DOCKERHUB_USERNAME }}/demo-image:latest .
+        if: github.ref == 'refs/heads/main'
       - name: Push latest image
         run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/demo-image:latest
+        if: github.ref == 'refs/heads/main'
