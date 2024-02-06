@@ -7,7 +7,7 @@ on:
     branches: [ "main" ]
 
 env:
-  docker-tag: ${{ github.ref_name }}-${GITHUB_SHA::7}
+  docker-tag: ${GITHUB_REF##*/}-${GITHUB_SHA::7}
 
 jobs:
   build:
