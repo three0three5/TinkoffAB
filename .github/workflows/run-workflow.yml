@@ -23,12 +23,12 @@ jobs:
   run:
     runs-on: ubuntu-latest
     env:
-      docker-tag: ${{ github.event.inputs.docker-tag }}
+      docker-image-name: ${{ secrets.DOCKERHUB_USERNAME }}/demo-image:${{ github.event.inputs.docker-tag }}
       first-num: ${{ github.event.inputs.first-num }}
       second-num: ${{ github.event.inputs.second-num }}
     steps:
       - uses: actions/checkout@v4
       - name: Docker image pull and run
         run: |
-          docker pull ${{ secrets.DOCKERHUB_USERNAME }}/demo-image:${{ env.docker-tag }}
-          docker run ${{ env.docker-tag }} ${{ env.first-num }} ${{ env.second-num }}
+          docker pull ${{ env.docker-image-name }}
+          docker run ${{ env.docker-image-name }} ${{ env.first-num }} ${{ env.second-num }}
