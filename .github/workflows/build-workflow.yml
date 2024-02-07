@@ -34,7 +34,8 @@ jobs:
         run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/demo-image:${{ env.docker-tag }}
 
       - name: Tag Docker image as latest
-        run: docker image tag ${{ secrets.DOCKERHUB_USERNAME }}/demo-image:${{ env.docker-tag }} ${{ secrets.DOCKERHUB_USERNAME }}/demo-image:latest
+        run: docker image tag \
+          ${{ secrets.DOCKERHUB_USERNAME }}/demo-image:${{ env.docker-tag }} ${{ secrets.DOCKERHUB_USERNAME }}/demo-image:latest
         if: github.ref == 'refs/heads/main'
       - name: Push latest image
         run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/demo-image:latest
