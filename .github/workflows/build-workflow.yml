@@ -16,7 +16,7 @@ jobs:
     with:
       chart-path: ./mychart 
       image-name: orobtsovv/demo-image 
-      image-tag: ${{ env.docker-tag }} 
+      image-tag: ${{ needs.build.outputs.docker-tag }} 
   
   build:
     runs-on: ubuntu-latest
@@ -49,3 +49,6 @@ jobs:
       - name: Push latest image
         run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/demo-image:latest
         if: github.ref == 'refs/heads/main'
+
+    outputs:
+      docker-tag: ${{ env.MAVEN_VERSION }}
