@@ -8,11 +8,15 @@ image:
   repository: orobtsovv/demo-image
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: helmtest
+  tag: latest
 
 probes:
-  liveness: /actuator/health/liveness
-  readiness: /actuator/health/readiness
+  liveness:
+    path: /actuator/health/liveness
+    initDelay: 20
+  readiness:
+    path: /actuator/health/readiness
+    initDelay: 20
 
 imagePullSecrets: []
 nameOverride: ""
