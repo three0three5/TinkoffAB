@@ -51,4 +51,4 @@ jobs:
         if: github.ref == 'refs/heads/main'
 
     outputs:
-      docker-tag: ${{ env.MAVEN_VERSION }}
+      docker-tag: ${{ env.docker-tag }}
