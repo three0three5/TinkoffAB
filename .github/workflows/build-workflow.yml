@@ -4,7 +4,7 @@ on:
   push:
     branches: [ "main" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "feedback" ]
 
 env:
   docker-tag: ${{ github.head_ref || github.ref_name }}-${GITHUB_SHA::7}
