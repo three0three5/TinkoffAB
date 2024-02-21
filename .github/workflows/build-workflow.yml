@@ -10,24 +10,21 @@ env:
   docker-tag: ${{ github.head_ref || github.ref_name }}-${GITHUB_SHA::7}
 
 jobs:
-  autotest:
-    needs: build
+  issue-create:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - name: create an issue
-        uses: dacbd/create-issue-action@main
-        with:
-          token: ${{ github.token }}
-          title: Autotests results
-          body: issue for autotests
+      - uses: actions/checkout@v3
+      - uses: JasonEtco/create-an-issue@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: autotests
-        uses: central-university-dev/hse-ab-cicd-hw/.github/workflows/autotests.yml@main
-        with:
-          chart-path: ./mychart
-          image-name: orobtsovv/demo-image
-          image-tag: ${{ needs.build.outputs.docker-tag }}
+  autotest:
+    needs: [build, issue-create]
+    uses: central-university-dev/hse-ab-cicd-hw/.github/workflows/autotests.yml@main
+    with:
+      chart-path: ./mychart
+      image-name: orobtsovv/demo-image
+      image-tag: ${{ needs.build.outputs.docker-tag }}
   
   build:
     runs-on: ubuntu-latest
