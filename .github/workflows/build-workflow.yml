@@ -10,9 +10,16 @@ env:
   docker-tag: ${{ github.head_ref || github.ref_name }}-${GITHUB_SHA::7}
 
 jobs:
+  autotest:
+    needs: build
+    uses: central-university-dev/hse-ab-cicd-hw/.github/workflows/autotests.yml@main
+    with:
+      chart-path: ./mychart 
+      image-name: ${{ secrets.DOCKERHUB_USERNAME }}/demo-image 
+      image-tag: ${{ env.docker-tag }} 
+  
   build:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v3
