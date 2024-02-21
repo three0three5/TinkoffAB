@@ -1,32 +1,63 @@
 # Задание
 
-Написать java программу, которая принимает на вход два целочисоленных аргумента и выводит результат суммирования
+Написать Spring приложение с одним REST методом:
 
-Для написанной программы написать Dockerfile 
+`GET /convert?from={currency}&to={currency}&amount={number}` - принимает на вход исходную/целевую
+валюты и сумму конвертации
 
-Создать в GitHub Actions два workflow:
+Для получения курса валют вызвать метод `GET /rates`.
 
-### Workflow сборки
-Запускается при пуше/мерже в мастер и при создании pull request'а 
-1) Собрать проект
-2) Собрать Docker образ
-3) Запушить собранный образ в Docker Hub с тэгом **$branch_name-$commmit_hash** ($commmit_hash - первые 7 символов хэша коммита)
-4) Если ворклоу запущен на мастер ветке дополнительно запушить собранный образ в Docker Hub с тэгом **latest**
+Список доступных валют и схема запроса/ответа доступны в [файле](api.yml). Модели необходимо сгенерировать из файла с помощью swagger-codegen
 
+Сервис возвращает список курсов валют относительно рубля для всех доступных валют.
 
-### Workflow запуска
-Запускается вручную, принимая на вход тэг образа и два слагаемых. Если тэг не передали - брать latest
-1) Скачивает образ из Docker Hub
-2) Запускает контейнер с образом и выводит результат в лог
+Если приходит запрос на конвертацию двух иностранных валют - проводить ее по кросс-курсу. Например `EUR->USD = EUR->RUB->USD`
 
+Возвращать ответ в виде json
 
-В комменты на edu пиложить ссылку на ваш docker hub. Там должны быть видны собранные с разных веток образы 
+```json
+{
+  "currency": "USD",
+  "amount": 42342.56
+}
+```
 
+Все суммы нужно передавать до 2 знаков после запятой. Способ округления - half even.
 
-Материалы:
+Формат ответа при ошибке
 
-+ https://docs.github.com/en/actions/learn-github-actions/variables#default-environment-variables
-+ https://github.com/docker/login-action
-+ https://docs.github.com/en/actions/security-guides/using-secrets-in-github-actions
-+ https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#workflow_dispatch
-+ https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#providing-inputs
+```json
+{
+  "message": "error message"
+}
+```
+
+Сообщения об ошибках:
+
++ amount <= 0: Http code 400, message - `"Отрицательная сумма"`
++ to/from нет в списке доступных валют: Http code 400, message `"Валюта {currency} недоступна"`
+
+# Тесты
+
+В свой воркфлоу сборки добавить новую джобу
+
+```yaml
+jobs:
+  autotest:
+    needs: $build_job_name # имя вашей основной джобы сборки
+    uses: central-university-dev/hse-ab-cicd-hw/.github/workflows/autotests.yml@main
+    with:
+      chart-path: ./rates # путь к чарту из второй дз
+      image-name: foo/bar-converter # имя образа вашего приложения
+      image-tag: $branch_name-$commit_hash # таг образа, который собран в рамках данного ПРа
+```
+
+Чарт из второй дз должен уметь принимать на вход параметры:
+
++ image.repository
++ image.tag
++ replicaCount
+
+В чарте должны быть правильно указаны ready/live пробы
+
+# ДЗ без пройденных автотестов не проверяется

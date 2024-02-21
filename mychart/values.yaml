@@ -11,8 +11,8 @@ image:
   tag: helmtest
 
 probes:
-  liveness: /api/actuator/health
-  readiness: /api/actuator/health
+  liveness: /actuator/health/liveness
+  readiness: /actuator/health/readiness
 
 imagePullSecrets: []
 nameOverride: ""

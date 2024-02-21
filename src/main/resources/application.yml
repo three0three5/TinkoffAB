@@ -1,3 +1,8 @@
-server:
-  servlet:
-    context-path: /api
+rates-service:
+  name: rates
+  port: 8080
+
+logging:
+  level:
+    org:
+      springframework: INFO
