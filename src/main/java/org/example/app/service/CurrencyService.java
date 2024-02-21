@@ -1,9 +1,9 @@
 package org.example.app.service;
 
-import lombok.RequiredArgsConstructor;
 import io.swagger.client.model.Currency;
-import org.example.app.dto.CurrencyResponseDto;
 import io.swagger.client.model.RatesResponse;
+import lombok.RequiredArgsConstructor;
+import org.example.app.dto.CurrencyResponseDto;
 import org.example.app.exception.AmountNotPositiveException;
 import org.example.app.exception.CurrencyNotAvailableException;
 import org.example.app.exception.NullBodyResponseException;
@@ -19,7 +19,7 @@ import java.util.Map;
 @Service
 @RequiredArgsConstructor
 public class CurrencyService {
-    private final RestTemplate restTemplate = new RestTemplate();
+    private final RestTemplate restTemplate;
 
     @Value("${rates-service.name}")
     private String ratesName;
@@ -48,10 +48,11 @@ public class CurrencyService {
 
     private BigDecimal convertRate(RatesResponse rates, Currency from, Currency to, double toConvert) {
         Map<String, BigDecimal> m = rates.getRates();
-        BigDecimal firstToBase = m.get(from.toString());
-        BigDecimal secondToBase = m.get(to.toString());
-        BigDecimal multiplier = secondToBase.divide(firstToBase, RoundingMode.HALF_EVEN);
-        return multiplier.multiply(BigDecimal.valueOf(toConvert)).setScale(2, RoundingMode.HALF_EVEN);
+        BigDecimal baseToFirst = m.get(from.toString());
+        BigDecimal baseToSecond = m.get(to.toString());
+        double multiplier = baseToFirst.doubleValue() / baseToSecond.doubleValue();
+        multiplier *= toConvert;
+        return BigDecimal.valueOf(multiplier).setScale(2, RoundingMode.HALF_EVEN);
     }
 
     private Currency[] getCurrencies(String[] strings) {
