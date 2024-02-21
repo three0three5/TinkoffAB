@@ -50,9 +50,10 @@ public class CurrencyService {
         Map<String, BigDecimal> m = rates.getRates();
         BigDecimal baseToFirst = m.get(from.toString());
         BigDecimal baseToSecond = m.get(to.toString());
-        double multiplier = baseToFirst.doubleValue() / baseToSecond.doubleValue();
-        multiplier *= toConvert;
-        return BigDecimal.valueOf(multiplier).setScale(2, RoundingMode.HALF_EVEN);
+        return baseToFirst
+                .divide(baseToSecond, 2, RoundingMode.HALF_EVEN)
+                .multiply(BigDecimal.valueOf(toConvert))
+                .setScale(2, RoundingMode.HALF_EVEN);
     }
 
     private Currency[] getCurrencies(String[] strings) {
