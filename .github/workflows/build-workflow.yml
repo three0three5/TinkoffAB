@@ -15,7 +15,7 @@ jobs:
     uses: central-university-dev/hse-ab-cicd-hw/.github/workflows/autotests.yml@main
     with:
       chart-path: ./mychart 
-      image-name: ${{ secrets.DOCKERHUB_USERNAME }}/demo-image 
+      image-name: orobtsovv/demo-image 
       image-tag: ${{ env.docker-tag }} 
   
   build:
