@@ -10,16 +10,6 @@ env:
   docker-tag: ${{ github.head_ref || github.ref_name }}-${GITHUB_SHA::7}
 
 jobs:
-  issue-create:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: JasonEtco/create-an-issue@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          TITLE: Autotests
-          MESSAGE: Autotests check
-
   autotest:
     needs: [build, issue-create]
     uses: central-university-dev/hse-ab-cicd-hw/.github/workflows/autotests.yml@main
