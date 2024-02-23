@@ -1,5 +1,5 @@
 rates-service:
-  url: http://localhost:8081
+  url: http://rates:8080
   rates-path: ${rates-service.url}/rates
 
 logging:
