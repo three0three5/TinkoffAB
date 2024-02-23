@@ -22,9 +22,10 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class CurrencyServiceTest {
-    private static CurrencyService currencyService;
+    private static final String ratesPath = "test";
+    private CurrencyService currencyService;
     @Mock
-    private static RestTemplate restTemplateMock;
+    private RestTemplate restTemplateMock;
 
     @BeforeEach
     void setUp() {
@@ -38,7 +39,7 @@ class CurrencyServiceTest {
                                 .base(Currency.RUB)
                                 .rates(m)
                 ));
-        currencyService = new CurrencyService(restTemplateMock, "test");
+        currencyService = new CurrencyService(restTemplateMock, ratesPath);
     }
 
     @Test
