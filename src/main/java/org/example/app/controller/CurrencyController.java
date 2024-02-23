@@ -1,5 +1,6 @@
 package org.example.app.controller;
 
+import io.swagger.client.model.Currency;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.app.dto.CurrencyResponseDto;
@@ -10,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.math.BigDecimal;
+
 @RestController
 @RequestMapping("/convert")
 @RequiredArgsConstructor
@@ -18,9 +21,9 @@ public class CurrencyController {
     private final CurrencyService currencyService;
 
     @GetMapping
-    public ResponseEntity<CurrencyResponseDto> getConvertedCurrency(@RequestParam String from,
-                                                                    @RequestParam String to,
-                                                                    @RequestParam double amount) {
+    public ResponseEntity<CurrencyResponseDto> getConvertedCurrency(@RequestParam Currency from,
+                                                                    @RequestParam Currency to,
+                                                                    @RequestParam BigDecimal amount) {
         log.info(from + " " + to + " " + amount);
         return ResponseEntity.ok(currencyService.convert(from, to, amount));
     }

@@ -5,7 +5,6 @@ import io.swagger.client.model.RatesResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.ResponseEntity;
@@ -23,10 +22,9 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class CurrencyServiceTest {
-    @InjectMocks
-    private CurrencyService currencyService;
+    private static CurrencyService currencyService;
     @Mock
-    private RestTemplate restTemplateMock;
+    private static RestTemplate restTemplateMock;
 
     @BeforeEach
     void setUp() {
@@ -40,23 +38,24 @@ class CurrencyServiceTest {
                                 .base(Currency.RUB)
                                 .rates(m)
                 ));
+        currencyService = new CurrencyService(restTemplateMock, "test");
     }
 
     @Test
     void givenRublesToEuros_whenConvert_thenGetEuros() {
-        var response = currencyService.convert("RUB", "EUR", 200);
+        var response = currencyService.convert(Currency.RUB, Currency.EUR, BigDecimal.valueOf(200));
         assertEquals(BigDecimal.valueOf(2).setScale(2, RoundingMode.HALF_EVEN), response.amount());
     }
 
     @Test
     void givenEurosToRubles_whenConvert_thenGetRubles() {
-        var response = currencyService.convert("EUR", "RUB", 3.5);
+        var response = currencyService.convert(Currency.EUR, Currency.RUB, BigDecimal.valueOf(3.5));
         assertEquals(BigDecimal.valueOf(350).setScale(2, RoundingMode.HALF_EVEN), response.amount());
     }
 
     @Test
     void givenTrickyDoubleValue_whenConvert_thenHalfEvenResult() {
-        var response = currencyService.convert("CNY", "RUB", 944.5);
+        var response = currencyService.convert(Currency.CNY, Currency.RUB, BigDecimal.valueOf(944.5));
         assertEquals(BigDecimal.valueOf(12609.08).setScale(2, RoundingMode.HALF_EVEN), response.amount());
     }
 }

@@ -1,6 +1,6 @@
 rates-service:
-  name: rates
-  port: 8080
+  url: http://localhost:8081
+  rates-path: ${rates-service.url}/rates
 
 logging:
   level:
