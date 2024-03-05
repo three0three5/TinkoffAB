@@ -21,10 +21,13 @@ public class CurrencyController {
     private final CurrencyService currencyService;
 
     @GetMapping
-    public ResponseEntity<CurrencyResponseDto> getConvertedCurrency(@RequestParam Currency from,
-                                                                    @RequestParam Currency to,
-                                                                    @RequestParam BigDecimal amount) {
+    public ResponseEntity<CurrencyResponseDto> getConvertedCurrency(
+            @RequestParam Currency from,
+            @RequestParam Currency to,
+            @RequestParam BigDecimal amount
+    ) {
         log.info(from + " " + to + " " + amount);
+
         return ResponseEntity.ok(currencyService.convert(from, to, amount));
     }
 }

@@ -19,7 +19,7 @@ public class WebClientConfig {
     // https://stackoverflow.com/questions/63022635/replacement-for-unauthenticatedserveroauth2authorizedclientrepository
     @Bean
     ReactiveClientRegistrationRepository getRegistration(
-            @Value("${spring.security.oauth2.client.provider.converter.token-uri}") String token_uri,
+            @Value("${spring.security.oauth2.client.provider.keycloak.token-uri}") String token_uri,
             @Value("${spring.security.oauth2.client.registration.converter.client-id}") String client_id,
             @Value("${spring.security.oauth2.client.registration.converter.client-secret}") String client_secret
     ) {

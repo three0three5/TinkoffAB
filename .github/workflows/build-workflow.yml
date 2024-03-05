@@ -13,10 +13,11 @@ jobs:
 #  autotest:
 #    needs: [build]
 #    if: github.event_name == 'pull_request'
-#    uses: central-university-dev/hse-ab-cicd-hw/.github/workflows/autotests.yml@main
+#    uses: central-university-dev/hse-ab-cicd-hw/.github/workflows/autotests-hw4.yml@main
 #    with:
 #      chart-path: ./mychart
-#      image-name: orobtsovv/demo-image
+#      converter-image-name: foo/bar-converter # имя образа вашего приложения
+#      accounts-image-name: foo/bar-accounts # имя образа вашего приложения
 #      image-tag: ${{ needs.build.outputs.docker-tag }}
   
   build:
