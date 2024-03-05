@@ -1,43 +1,53 @@
 # Задание
 
-Написать Spring приложение с одним REST методом:
+# Авторизация
 
-`GET /convert?from={currency}&to={currency}&amount={number}` - принимает на вход исходную/целевую
-валюты и сумму конвертации
+В сервис `rates` была добавлена авторизация. Необходимо научить `converter` ее использовать
 
-Для получения курса валют вызвать метод `GET /rates`.
+Вам необходимо добавить авторизацию в сервис `converter`. И научить `accounts` ее использовать
 
-Список доступных валют и схема запроса/ответа доступны в [файле](api.yml). Модели необходимо сгенерировать из файла с помощью swagger-codegen
+Сервис `accounts` оставить без авторизации
 
-Сервис возвращает список курсов валют относительно рубля для всех доступных валют.
+Для получения токена использовать `POST ${keycloak_url}/realms/${realm}/protocol/openid-connect/token`
 
-Если приходит запрос на конвертацию двух иностранных валют - проводить ее по кросс-курсу. Например `EUR->USD = EUR->RUB->USD`
+Для проверки пришедшего токена `${keycloak_url}/realms/${realm}/protocol/openid-connect/certs`
 
-Возвращать ответ в виде json
+Для авторизации используется **client credentials flow**. Все данные будут переданы через переменные окружения
+# Тестирование
 
-```json
-{
-  "currency": "USD",
-  "amount": 42342.56
-}
+## Переменные окружения
+
+Ваши приложения должны работать со следующими переменными окружения
+
+Accounts:
+* **DB_HOST** - хост БД
+* **DB_PORT** - порт БД
+* **DB_NAME** - название БД
+* **DB_USER** - пользователь БД
+* **DB_PASSWORD** - пароль для подключения к БД
+* **CONVERTER_URL** - адрес конвертера вида http://smth:1234
+* **KEYCLOAK_URL** - адрес киклоки вида http://smth:1234
+* **KEYCLOAK_REALM** - realm, в котором живет клиент
+* **CLIENT_ID** - client-id
+* **CLIENT_SECRET** - client-secret
+
+Converter:
+* **RATES_URL** - адрес сервиса курсов валют вида http://smth:1234
+* **KEYCLOAK_URL** - адрес киклоки вида http://smth:1234
+* **KEYCLOAK_REALM** - realm, в котором живет клиент
+* **CLIENT_ID** - client-id
+* **CLIENT_SECRET** - client-secret
+
+При установке хелм чарта переменные окружения будут передаваться через переменные чарта.
+Для этого нужно добавить в свои чарты поддержку переменной extraEnv
+
+```yml
+extraEnv:
+  - name: ENV_NAME
+    value: some-value
 ```
 
-Все суммы нужно передавать до 2 знаков после запятой. Способ округления - half even.
-
-Формат ответа при ошибке
-
-```json
-{
-  "message": "error message"
-}
-```
-
-Сообщения об ошибках:
-
-+ amount <= 0: Http code 400, message - `"Отрицательная сумма"`
-+ to/from нет в списке доступных валют: Http code 400, message `"Валюта {currency} недоступна"`
-
-# Тесты
+Чарт должен уметь работать с переменной-массивом и все параметры передавать в переменные окружения пода
 
 В свой воркфлоу сборки добавить новую джобу
 
@@ -45,19 +55,10 @@
 jobs:
   autotest:
     needs: $build_job_name # имя вашей основной джобы сборки
-    uses: central-university-dev/hse-ab-cicd-hw/.github/workflows/autotests.yml@main
+    uses: central-university-dev/hse-ab-cicd-hw/.github/workflows/autotests-hw4.yml@main
     with:
       chart-path: ./rates # путь к чарту из второй дз
-      image-name: foo/bar-converter # имя образа вашего приложения
+      converter-image-name: foo/bar-converter # имя образа вашего приложения
+      accounts-image-name: foo/bar-accounts # имя образа вашего приложения
       image-tag: $branch_name-$commit_hash # таг образа, который собран в рамках данного ПРа
 ```
-
-Чарт из второй дз должен уметь принимать на вход параметры:
-
-+ image.repository
-+ image.tag
-+ replicaCount
-
-В чарте должны быть правильно указаны ready/live пробы
-
-# ДЗ без пройденных автотестов не проверяется

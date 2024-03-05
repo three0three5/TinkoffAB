@@ -8,9 +8,10 @@ import org.example.app.exception.AmountNotPositiveException;
 import org.example.app.exception.CurrencyNotAvailableException;
 import org.example.app.exception.NullBodyResponseException;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -19,7 +20,7 @@ import java.util.Map;
 @Service
 @RequiredArgsConstructor
 public class CurrencyService {
-    private final RestTemplate restTemplate;
+    private final WebClient webClient;
 
     @Value("${rates-service.rates-path}")
     private final String ratesPath;
@@ -34,11 +35,13 @@ public class CurrencyService {
     }
 
     private RatesResponse getRatesResponse() {
-        ResponseEntity<RatesResponse> response = restTemplate
-                .getForEntity(ratesPath, RatesResponse.class);
-        RatesResponse rates = response.getBody();
-        if (rates == null) throw new NullBodyResponseException();
-        return rates;
+        return webClient.get()
+                .uri(ratesPath)
+                .accept(MediaType.APPLICATION_JSON)
+                .retrieve()
+                .bodyToMono(RatesResponse.class)
+                .onErrorResume(error -> Mono.error(new NullBodyResponseException()))
+                .block();
     }
 
     private BigDecimal convertRate(RatesResponse rates, Currency from, Currency to, BigDecimal toConvert) {
