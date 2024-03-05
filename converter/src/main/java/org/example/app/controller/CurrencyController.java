@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.example.app.dto.CurrencyResponseDto;
 import org.example.app.service.CurrencyService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -22,6 +23,7 @@ public class CurrencyController {
 
     @GetMapping
     public ResponseEntity<CurrencyResponseDto> getConvertedCurrency(
+            Authentication authentication,
             @RequestParam Currency from,
             @RequestParam Currency to,
             @RequestParam BigDecimal amount
