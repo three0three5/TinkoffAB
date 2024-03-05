@@ -46,24 +46,27 @@ jobs:
       - name: Push the accounts image
         run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/accounts:${{ env.docker-tag }}
 
-    outputs:
-      docker-tag: ${{ env.docker-tag }}
-
-    if: github.ref == 'refs/heads/main'
       - name: Tag Docker converter image as latest
         run: |
           docker image tag \
             ${{ secrets.DOCKERHUB_USERNAME }}/converter:${{ env.docker-tag }} \
             ${{ secrets.DOCKERHUB_USERNAME }}/converter:latest
+        if: github.ref == 'refs/heads/main'
 
       - name: Push latest converter image
         run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/converter:latest
+        if: github.ref == 'refs/heads/main'
 
       - name: Tag Docker accounts image as latest
         run: |
           docker image tag \
             ${{ secrets.DOCKERHUB_USERNAME }}/accounts:${{ env.docker-tag }} \
             ${{ secrets.DOCKERHUB_USERNAME }}/accounts:latest
+        if: github.ref == 'refs/heads/main'
 
       - name: Push latest accounts image
         run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/accounts:latest
+        if: github.ref == 'refs/heads/main'
+
+    outputs:
+      docker-tag: ${{ env.docker-tag }}
