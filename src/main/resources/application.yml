@@ -1,8 +1,0 @@
-rates-service:
-  url: http://rates:8080
-  rates-path: ${rates-service.url}/rates
-
-logging:
-  level:
-    org:
-      springframework: INFO

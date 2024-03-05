@@ -1,0 +1,24 @@
+rates-service:
+  url: ${RATES_URL:http://localhost:53999}
+  rates-path: ${rates-service.url}/rates
+
+spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          converter:
+            client-id: ${CLIENT_ID}
+            client-secret: ${CLIENT_SECRET}
+            authorization-grant-type: client_credentials
+            client-authentication-method: basic
+            provider: converter
+        provider:
+          converter:
+            token-uri: ${KEYCLOAK_URL:http://localhost:53993}/realms/${KEYCLOAK_REALM:hse}/protocol/openid-connect/token
+
+logging:
+  level:
+    org:
+      springframework: INFO
+
