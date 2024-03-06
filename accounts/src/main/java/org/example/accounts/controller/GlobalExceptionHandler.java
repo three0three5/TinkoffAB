@@ -4,6 +4,7 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.example.accounts.dto.response.ErrorResponseDto;
 import org.example.accounts.exception.InvalidParamException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -28,6 +29,14 @@ public class GlobalExceptionHandler {
             errors.put(fieldName, errorMessage);
         });
         return errors;
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public Map<String, String> handleDataIntegrityException(DataIntegrityViolationException e) {
+        Map<String, String> result = new HashMap<>();
+        result.put(e.getClass().getSimpleName(), e.getLocalizedMessage());
+        return result;
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)

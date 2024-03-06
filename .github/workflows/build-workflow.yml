@@ -10,15 +10,15 @@ env:
   docker-tag: ${{ github.head_ref || github.ref_name }}-${GITHUB_SHA::7}
 
 jobs:
-#  autotest:
-#    needs: [build]
-#    if: github.event_name == 'pull_request'
-#    uses: central-university-dev/hse-ab-cicd-hw/.github/workflows/autotests-hw4.yml@main
-#    with:
-#      chart-path: ./mychart
-#      converter-image-name: foo/bar-converter # имя образа вашего приложения
-#      accounts-image-name: foo/bar-accounts # имя образа вашего приложения
-#      image-tag: ${{ needs.build.outputs.docker-tag }}
+  autotest:
+    needs: [build]
+    if: github.event_name == 'pull_request'
+    uses: central-university-dev/hse-ab-cicd-hw/.github/workflows/autotests-hw4.yml@main
+    with:
+      chart-path: ./mychart
+      converter-image-name: orobtsovv/converter # имя образа вашего приложения
+      accounts-image-name: orobtsovv/accounts # имя образа вашего приложения
+      image-tag: ${{ needs.build.outputs.docker-tag }}
   
   build:
     runs-on: ubuntu-latest

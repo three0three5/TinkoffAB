@@ -35,6 +35,6 @@ public class CustomerEntity {
     @Column(nullable = false)
     private LocalDate birthDay;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "owner")
     private Set<AccountEntity> accounts = new HashSet<>();
 }

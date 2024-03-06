@@ -1,5 +1,5 @@
 rates-service:
-  url: ${RATES_URL:http://localhost:63621}
+  url: ${RATES_URL:http://localhost:51128}
   rates-path: ${rates-service.url}/rates
 
 spring:

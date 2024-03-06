@@ -10,6 +10,7 @@ import org.example.accounts.dto.response.BalanceResponse;
 import org.example.accounts.dto.response.CustomerIdResponse;
 import org.example.accounts.exception.CustomerNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -29,6 +30,7 @@ public class CustomerService {
         return new CustomerIdResponse().setCustomerId(newCustomer.getId());
     }
 
+    @Transactional
     public BalanceResponse getFullBalance(Integer customerId, Currency currency) {
         BigDecimal balance = customersRepository.findById(customerId)
                 .orElseThrow(CustomerNotFoundException::new)
