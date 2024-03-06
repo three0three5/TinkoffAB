@@ -29,7 +29,7 @@ public class CurrencyController {
             @RequestParam BigDecimal amount
     ) {
         log.info(from + " " + to + " " + amount);
-
+        log.info(authentication.toString());
         return ResponseEntity.ok(currencyService.convert(from, to, amount));
     }
 }

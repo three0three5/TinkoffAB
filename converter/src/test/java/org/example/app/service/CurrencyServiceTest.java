@@ -1,61 +1,38 @@
 package org.example.app.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.client.model.Currency;
 import io.swagger.client.model.RatesResponse;
-import okhttp3.mockwebserver.MockWebServer;
-import okhttp3.mockwebserver.MockResponse;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
+import org.example.app.client.RatesClient;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.web.reactive.function.client.WebClient;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class CurrencyServiceTest {
-    private static String ratesPath;
+    @InjectMocks
     private CurrencyService currencyService;
-
-    private WebClient webClient = WebClient.builder().build();
-
-    private static MockWebServer mockBackEnd;
-
-    private static final ObjectMapper objectMapper = new ObjectMapper();
-
-    @BeforeAll
-    static void init() throws IOException {
-        mockBackEnd = new MockWebServer();
-        mockBackEnd.start();
-    }
-
-    @AfterAll
-    static void tearDown() throws IOException {
-        mockBackEnd.shutdown();
-    }
+    @Mock
+    private RatesClient client;
 
     @BeforeEach
-    void setUp() throws JsonProcessingException {
+    void setUp() {
         Map<String, BigDecimal> m = new HashMap<>();
         m.put("RUB", BigDecimal.ONE);
         m.put("EUR", BigDecimal.valueOf(100));
         m.put("CNY", BigDecimal.valueOf(1335).divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_EVEN));
         RatesResponse response = new RatesResponse().base(Currency.RUB).rates(m);
-        mockBackEnd.enqueue(new MockResponse()
-                .setBody(objectMapper.writeValueAsString(response))
-                .addHeader("Content-Type", "application/json"));
-        ratesPath = String.format("http://localhost:%s", mockBackEnd.getPort());
-        currencyService = new CurrencyService(webClient, ratesPath);
+        when(client.getRatesResponse()).thenReturn(response);
     }
 
     @Test

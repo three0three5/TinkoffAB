@@ -15,7 +15,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import static org.example.app.utils.Constants.REGISTRATION_ID;
 
 @Configuration
-public class WebClientConfig {
+public class WebClientConfig { // TODO: увеличить время таймаута запроса
     // https://stackoverflow.com/questions/63022635/replacement-for-unauthenticatedserveroauth2authorizedclientrepository
     @Bean
     ReactiveClientRegistrationRepository getRegistration(

@@ -1,16 +1,15 @@
-rates-service:
-  url: ${RATES_URL:http://localhost:63621}
-  rates-path: ${rates-service.url}/rates
+converter-service:
+  url: ${CONVERTER_URL:http://localhost:63621}
+  converter-path: ${converter-service.url}/convert
+
+# DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASSWORD
 
 spring:
   security:
     oauth2:
-      resourceserver:
-        jwt:
-          jwk-set-uri: ${KEYCLOAK_URL:http://localhost:63608}/realms/hse/protocol/openid-connect/certs
       client:
         registration:
-          converter:
+          accounts:
             client-id: ${CLIENT_ID}
             client-secret: ${CLIENT_SECRET}
             authorization-grant-type: client_credentials
@@ -19,7 +18,6 @@ spring:
         provider:
           keycloak:
             token-uri: ${KEYCLOAK_URL:http://localhost:63608}/realms/${KEYCLOAK_REALM:hse}/protocol/openid-connect/token
-
 logging:
   level:
     root: info
