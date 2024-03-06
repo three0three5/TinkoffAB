@@ -5,6 +5,25 @@ converter-service:
 # DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASSWORD
 
 spring:
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:accounts}
+    username: ${DB_USER:postgres}
+    password: ${DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        order_by.default_null_ordering: last
+        format_sql: true
+        default_schema: public
+    open-in-view: false
+    show-sql: true
+    generate-ddl: true
+
   security:
     oauth2:
       client:
