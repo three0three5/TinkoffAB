@@ -15,7 +15,6 @@ import org.example.accounts.dto.response.AccountResponse;
 import org.example.accounts.exception.CustomerAccountNotFoundException;
 import org.example.accounts.exception.CustomerNotFoundException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;

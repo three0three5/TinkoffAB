@@ -3,6 +3,7 @@ package org.example.app.config;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.security.oauth2.client.AuthorizedClientServiceReactiveOAuth2AuthorizedClientManager;
 import org.springframework.security.oauth2.client.InMemoryReactiveOAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
@@ -11,11 +12,14 @@ import org.springframework.security.oauth2.client.registration.ReactiveClientReg
 import org.springframework.security.oauth2.client.web.reactive.function.client.ServerOAuth2AuthorizedClientExchangeFilterFunction;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.netty.http.client.HttpClient;
+
+import java.time.Duration;
 
 import static org.example.app.utils.Constants.REGISTRATION_ID;
 
 @Configuration
-public class WebClientConfig { // TODO: увеличить время таймаута запроса
+public class WebClientConfig {
     // https://stackoverflow.com/questions/63022635/replacement-for-unauthenticatedserveroauth2authorizedclientrepository
     @Bean
     ReactiveClientRegistrationRepository getRegistration(
@@ -42,7 +46,11 @@ public class WebClientConfig { // TODO: увеличить время тайма
         ServerOAuth2AuthorizedClientExchangeFilterFunction oauth =
                 new ServerOAuth2AuthorizedClientExchangeFilterFunction(authorizedClientManager);
         oauth.setDefaultClientRegistrationId(REGISTRATION_ID);
+
+        HttpClient client = HttpClient.create()
+                .responseTimeout(Duration.ofSeconds(20));
         return WebClient.builder()
+                .clientConnector(new ReactorClientHttpConnector(client))
                 .filter(oauth)
                 .build();
     }
