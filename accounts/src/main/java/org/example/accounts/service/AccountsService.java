@@ -1,6 +1,7 @@
 package org.example.accounts.service;
 
 import lombok.RequiredArgsConstructor;
+import org.example.accounts.domain.AccountsRepository;
 import org.example.accounts.dto.request.AmountRequest;
 import org.example.accounts.dto.request.CreateAccountDto;
 import org.example.accounts.dto.request.TransferRequest;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class AccountsService {
+    private final AccountsRepository accountsRepository;
 
     public AccountResponse createAccount(CreateAccountDto createAccountDto) {
         return null; // TODO

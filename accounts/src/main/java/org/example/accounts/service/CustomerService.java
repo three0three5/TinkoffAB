@@ -1,6 +1,7 @@
 package org.example.accounts.service;
 
 import lombok.RequiredArgsConstructor;
+import org.example.accounts.domain.CustomersRepository;
 import org.example.accounts.dto.request.CreateCustomerDto;
 import org.example.accounts.dto.response.BalanceResponse;
 import org.example.accounts.dto.response.CustomerIdResponse;
@@ -10,6 +11,7 @@ import io.swagger.client.model.Currency;
 @Service
 @RequiredArgsConstructor
 public class CustomerService {
+    private final CustomersRepository customersRepository;
 
     public CustomerIdResponse createCustomer(CreateCustomerDto createCustomerDto) {
         return null; // TODO
