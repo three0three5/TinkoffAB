@@ -1,6 +1,7 @@
 package org.example.accounts.domain.entity;
 
 import io.swagger.client.model.Currency;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -32,6 +33,7 @@ public class AccountEntity {
     private BigDecimal balance;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private Currency currency;
 
     @JoinColumn(name = "owner", referencedColumnName="id")

@@ -12,6 +12,7 @@ import org.example.accounts.exception.CustomerNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 @Service
 @RequiredArgsConstructor
@@ -42,7 +43,8 @@ public class CustomerService {
                             accountEntity.getBalance()
                     ).amount();
                 })
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+                .reduce(BigDecimal.ZERO, BigDecimal::add)
+                .setScale(2, RoundingMode.HALF_EVEN);
         return new BalanceResponse()
                 .setCurrency(currency)
                 .setBalance(balance);

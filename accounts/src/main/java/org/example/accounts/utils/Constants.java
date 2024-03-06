@@ -6,4 +6,6 @@ public class Constants {
     public static final String REGISTRATION_ID = "accounts";
     public static final String NULL_BODY_EXCEPTION = "Null body retrieved from Converter service";
     public static final String CUSTOMER_NOT_FOUND = "Customer not found";
+    public static final String CUSTOMER_ACCOUNT_NOT_FOUND = "Customer account not found";
+    public static final String NOT_ENOUGH_MONEY = "Not enough money";
 }

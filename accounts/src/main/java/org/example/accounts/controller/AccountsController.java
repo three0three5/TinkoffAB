@@ -32,8 +32,8 @@ public class AccountsController {
     }
 
     @GetMapping("/{accountNumber}")
-    public ResponseEntity<AccountBalanceResponse> getAccountBalance(@PathVariable String accountNumber) {
-        log.info(accountNumber);
+    public ResponseEntity<AccountBalanceResponse> getAccountBalance(@PathVariable Integer accountNumber) {
+        log.info(accountNumber.toString());
         return ResponseEntity.ok(accountsService.getAccountBalance(accountNumber));
     }
 

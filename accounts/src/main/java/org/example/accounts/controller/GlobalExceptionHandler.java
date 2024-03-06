@@ -41,4 +41,10 @@ public class GlobalExceptionHandler {
     public ErrorResponseDto handleEntityNotFoundException(EntityNotFoundException e) {
         return new ErrorResponseDto(e.getMessage());
     }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ErrorResponseDto handleIllegalArgumentException(IllegalArgumentException e) {
+        return new ErrorResponseDto(e.getMessage());
+    }
 }
