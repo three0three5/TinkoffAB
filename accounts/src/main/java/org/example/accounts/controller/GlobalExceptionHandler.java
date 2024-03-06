@@ -1,5 +1,6 @@
 package org.example.accounts.controller;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.example.accounts.dto.response.ErrorResponseDto;
 import org.example.accounts.exception.InvalidParamException;
@@ -32,6 +33,12 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(InvalidParamException.class)
     public ErrorResponseDto handleInvalidParamException(InvalidParamException e) {
+        return new ErrorResponseDto(e.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ErrorResponseDto handleEntityNotFoundException(EntityNotFoundException e) {
         return new ErrorResponseDto(e.getMessage());
     }
 }

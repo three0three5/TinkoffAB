@@ -1,7 +1,6 @@
 package org.example.accounts.domain.entity;
 
 import io.swagger.client.model.Currency;
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
