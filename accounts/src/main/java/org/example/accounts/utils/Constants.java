@@ -8,4 +8,5 @@ public class Constants {
     public static final String CUSTOMER_NOT_FOUND = "Customer not found";
     public static final String CUSTOMER_ACCOUNT_NOT_FOUND = "Customer account not found";
     public static final String NOT_ENOUGH_MONEY = "Not enough money";
+    public static final String AMOUNT_NOT_VALID = "Amount not valid";
 }

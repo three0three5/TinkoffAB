@@ -1,14 +1,13 @@
-package org.example.app.dto.validator;
+package org.example.accounts.dto.validator;
 
 import jakarta.validation.ConstraintValidatorContext;
-import org.example.accounts.dto.validator.ValidBirthdayValidator;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 class ValidBirthdayValidatorTest {
     public final ValidBirthdayValidator validator = new ValidBirthdayValidator();

@@ -22,6 +22,7 @@ import java.math.RoundingMode;
 import java.util.List;
 import java.util.Optional;
 
+import static org.example.accounts.utils.Constants.AMOUNT_NOT_VALID;
 import static org.example.accounts.utils.Constants.NOT_ENOUGH_MONEY;
 
 @Service
@@ -46,13 +47,15 @@ public class AccountsService {
     public AccountBalanceResponse getAccountBalance(Integer accountNumber) {
         AccountEntity entity = accountsRepository.findById(accountNumber)
                 .orElseThrow(CustomerAccountNotFoundException::new);
-        return new AccountBalanceResponse().setCurrency(entity.getCurrency()).setAmount(entity.getBalance());
+        return new AccountBalanceResponse()
+                .setCurrency(entity.getCurrency())
+                .setAmount(entity.getBalance());
     }
 
     @Transactional
     public void topUpAccount(Integer accountNumber, AmountRequest amountRequest) {
         if (amountRequest.getAmount().compareTo(BigDecimal.ZERO) <= 0)
-            throw new IllegalArgumentException("Amount not valid");
+            throw new IllegalArgumentException(AMOUNT_NOT_VALID);
         AccountEntity accountEntity = accountsRepository
                 .findById(accountNumber).orElseThrow(CustomerAccountNotFoundException::new);
         accountEntity.setBalance(accountEntity
@@ -106,7 +109,7 @@ public class AccountsService {
                     amount
             ).amount();
         }
-        BigDecimal newReceiverBalance = sender.getBalance()
+        BigDecimal newReceiverBalance = receiver.getBalance()
                 .add(toAdd)
                 .setScale(2, RoundingMode.HALF_EVEN);
         receiver.setBalance(newReceiverBalance);
