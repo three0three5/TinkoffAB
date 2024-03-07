@@ -24,3 +24,8 @@ logging:
   level:
     root: info
 
+management:
+  endpoint:
+    health:
+      probes:
+        enabled: true
