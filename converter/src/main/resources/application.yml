@@ -5,9 +5,6 @@ rates-service:
 spring:
   security:
     oauth2:
-      resourceserver:
-        jwt:
-          jwk-set-uri: ${KEYCLOAK_URL:http://localhost:63608}/realms/hse/protocol/openid-connect/certs
       client:
         registration:
           converter:

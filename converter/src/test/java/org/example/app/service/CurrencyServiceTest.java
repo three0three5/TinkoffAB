@@ -1,8 +1,11 @@
 package org.example.app.service;
 
+import com.example.grpc.CurrencyProto;
+import com.example.grpc.CurrencyRequest;
 import io.swagger.client.model.Currency;
 import io.swagger.client.model.RatesResponse;
 import org.example.app.client.RatesClient;
+import org.example.app.mapper.ProtoMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,6 +27,7 @@ class CurrencyServiceTest {
     private CurrencyService currencyService;
     @Mock
     private RatesClient client;
+    private final ProtoMapper mapper = new ProtoMapper();
 
     @BeforeEach
     void setUp() {
@@ -37,19 +41,37 @@ class CurrencyServiceTest {
 
     @Test
     void givenRublesToEuros_whenConvert_thenGetEuros() {
-        var response = currencyService.convert(Currency.RUB, Currency.EUR, BigDecimal.valueOf(200));
-        assertEquals(BigDecimal.valueOf(2).setScale(2, RoundingMode.HALF_EVEN), response.amount());
+        CurrencyRequest request = CurrencyRequest.newBuilder()
+                .setFrom(CurrencyProto.RUB)
+                .setTo(CurrencyProto.EUR)
+                .setAmount(mapper.mapBigDecimalToDecimalValue(BigDecimal.valueOf(200)))
+                .build();
+        var response = currencyService.convert(request);
+        assertEquals(BigDecimal.valueOf(2).setScale(2, RoundingMode.HALF_EVEN),
+                mapper.mapDecimalValueToBigDecimal(response.getConvertedAmount()));
     }
 
     @Test
     void givenEurosToRubles_whenConvert_thenGetRubles() {
-        var response = currencyService.convert(Currency.EUR, Currency.RUB, BigDecimal.valueOf(3.5));
-        assertEquals(BigDecimal.valueOf(350).setScale(2, RoundingMode.HALF_EVEN), response.amount());
+        CurrencyRequest request = CurrencyRequest.newBuilder()
+                .setFrom(CurrencyProto.EUR)
+                .setTo(CurrencyProto.RUB)
+                .setAmount(mapper.mapBigDecimalToDecimalValue(BigDecimal.valueOf(3.5)))
+                .build();
+        var response = currencyService.convert(request);
+        assertEquals(BigDecimal.valueOf(350).setScale(2, RoundingMode.HALF_EVEN),
+                mapper.mapDecimalValueToBigDecimal(response.getConvertedAmount()));
     }
 
     @Test
     void givenTrickyDoubleValue_whenConvert_thenHalfEvenResult() {
-        var response = currencyService.convert(Currency.CNY, Currency.RUB, BigDecimal.valueOf(944.5));
-        assertEquals(BigDecimal.valueOf(12609.08).setScale(2, RoundingMode.HALF_EVEN), response.amount());
+        CurrencyRequest request = CurrencyRequest.newBuilder()
+                .setFrom(CurrencyProto.CNY)
+                .setTo(CurrencyProto.RUB)
+                .setAmount(mapper.mapBigDecimalToDecimalValue(BigDecimal.valueOf(944.5)))
+                .build();
+        var response = currencyService.convert(request);
+        assertEquals(BigDecimal.valueOf(12609.08).setScale(2, RoundingMode.HALF_EVEN),
+                mapper.mapDecimalValueToBigDecimal(response.getConvertedAmount()));
     }
 }

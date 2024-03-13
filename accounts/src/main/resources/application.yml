@@ -24,19 +24,6 @@ spring:
     show-sql: true
     generate-ddl: true
 
-  security:
-    oauth2:
-      client:
-        registration:
-          accounts:
-            client-id: ${CLIENT_ID}
-            client-secret: ${CLIENT_SECRET}
-            authorization-grant-type: client_credentials
-            client-authentication-method: basic
-            provider: keycloak
-        provider:
-          keycloak:
-            token-uri: ${KEYCLOAK_URL:http://localhost:63608}/realms/${KEYCLOAK_REALM:hse}/protocol/openid-connect/token
 logging:
   level:
     root: info
