@@ -23,11 +23,10 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class CurrencyServiceTest {
-    @InjectMocks
     private CurrencyService currencyService;
     @Mock
     private RatesClient client;
-    private final ProtoMapper mapper = new ProtoMapper();
+    private ProtoMapper mapper = new ProtoMapper();
 
     @BeforeEach
     void setUp() {
@@ -37,6 +36,7 @@ class CurrencyServiceTest {
         m.put("CNY", BigDecimal.valueOf(1335).divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_EVEN));
         RatesResponse response = new RatesResponse().base(Currency.RUB).rates(m);
         when(client.getRatesResponse()).thenReturn(response);
+        currencyService = new CurrencyService(client, mapper);
     }
 
     @Test
