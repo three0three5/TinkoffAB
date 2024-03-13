@@ -47,7 +47,7 @@ public class WebClientConfig {
         oauth.setDefaultClientRegistrationId(REGISTRATION_ID);
 
         HttpClient client = HttpClient.create()
-                .responseTimeout(Duration.ofSeconds(20));
+                .responseTimeout(Duration.ofSeconds(10));
         return WebClient.builder()
                 .clientConnector(new ReactorClientHttpConnector(client))
                 .filter(oauth)
