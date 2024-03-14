@@ -1,5 +1,5 @@
 rates-service:
-  url: ${RATES_URL:http://localhost:51128}
+  url: ${RATES_URL:http://localhost:65158}
   rates-path: ${rates-service.url}/rates
 
 grpc:
@@ -19,7 +19,7 @@ spring:
             provider: keycloak
         provider:
           keycloak:
-            token-uri: ${KEYCLOAK_URL:http://localhost:63608}/realms/${KEYCLOAK_REALM:hse}/protocol/openid-connect/token
+            token-uri: ${KEYCLOAK_URL:http://localhost:65190}/realms/${KEYCLOAK_REALM:hse}/protocol/openid-connect/token
 
 logging:
   level:

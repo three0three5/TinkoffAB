@@ -9,9 +9,9 @@ import org.example.app.mapper.ProtoMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import reactor.core.publisher.Mono;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -35,7 +35,7 @@ class CurrencyServiceTest {
         m.put("EUR", BigDecimal.valueOf(100));
         m.put("CNY", BigDecimal.valueOf(1335).divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_EVEN));
         RatesResponse response = new RatesResponse().base(Currency.RUB).rates(m);
-        when(client.getRatesResponse()).thenReturn(response);
+        when(client.getRatesResponse()).thenReturn(Mono.just(response));
         currencyService = new CurrencyService(client, mapper);
     }
 
@@ -48,7 +48,7 @@ class CurrencyServiceTest {
                 .build();
         var response = currencyService.convert(request);
         assertEquals(BigDecimal.valueOf(2).setScale(2, RoundingMode.HALF_EVEN),
-                mapper.mapDecimalValueToBigDecimal(response.getConvertedAmount()));
+                mapper.mapDecimalValueToBigDecimal(response.block().getConvertedAmount()));
     }
 
     @Test
@@ -60,7 +60,7 @@ class CurrencyServiceTest {
                 .build();
         var response = currencyService.convert(request);
         assertEquals(BigDecimal.valueOf(350).setScale(2, RoundingMode.HALF_EVEN),
-                mapper.mapDecimalValueToBigDecimal(response.getConvertedAmount()));
+                mapper.mapDecimalValueToBigDecimal(response.block().getConvertedAmount()));
     }
 
     @Test
@@ -72,6 +72,6 @@ class CurrencyServiceTest {
                 .build();
         var response = currencyService.convert(request);
         assertEquals(BigDecimal.valueOf(12609.08).setScale(2, RoundingMode.HALF_EVEN),
-                mapper.mapDecimalValueToBigDecimal(response.getConvertedAmount()));
+                mapper.mapDecimalValueToBigDecimal(response.block().getConvertedAmount()));
     }
 }

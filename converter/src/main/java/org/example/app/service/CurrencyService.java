@@ -11,6 +11,7 @@ import org.example.app.exception.AmountNotPositiveException;
 import org.example.app.exception.CurrencyNotAvailableException;
 import org.example.app.mapper.ProtoMapper;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Mono;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -23,23 +24,24 @@ public class CurrencyService {
     private final RatesClient ratesClient;
     private final ProtoMapper mapper;
 
-    public CurrencyResponse convert(CurrencyRequest request) {
+    public Mono<CurrencyResponse> convert(CurrencyRequest request) {
         BigDecimal amount = mapper.mapDecimalValueToBigDecimal(request.getAmount());
         Currency from = mapper.mapCurrencyProtoToCurrency(request.getFrom());
         Currency to = mapper.mapCurrencyProtoToCurrency(request.getTo());
 
         if (amount.compareTo(BigDecimal.ZERO) <= 0) throw new AmountNotPositiveException();
 
-        RatesResponse rates = ratesClient.getRatesResponse();
-
-        BigDecimal amountConverted = convertRate(rates, from, to, amount);
-        return CurrencyResponse.newBuilder()
-                .setBase(request.getTo())
-                .setConvertedAmount(mapper.mapBigDecimalToDecimalValue(amountConverted))
-                .build();
+        Mono<RatesResponse> rates = ratesClient.getRatesResponse();
+        return rates
+                .map(ratesResponse -> convertRate(ratesResponse, from, to, amount))
+                .map(bigDecimal -> CurrencyResponse.newBuilder()
+                        .setBase(request.getTo())
+                        .setConvertedAmount(mapper.mapBigDecimalToDecimalValue(bigDecimal))
+                        .build());
     }
 
     private BigDecimal convertRate(RatesResponse rates, Currency from, Currency to, BigDecimal toConvert) {
+        log.info("to convert: " + toConvert);
         Map<String, BigDecimal> m = rates.getRates();
         BigDecimal baseToFirst = m.get(from.name());
         BigDecimal baseToSecond = m.get(to.name());

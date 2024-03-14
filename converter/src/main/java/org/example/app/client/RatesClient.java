@@ -16,13 +16,12 @@ public class RatesClient {
     @Value("${rates-service.rates-path}")
     private final String ratesPath;
 
-    public RatesResponse getRatesResponse() {
+    public Mono<RatesResponse> getRatesResponse() {
         return webClient.get()
                 .uri(ratesPath)
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .bodyToMono(RatesResponse.class)
-                .onErrorResume(error -> Mono.error(new NullBodyResponseException()))
-                .block();
+                .onErrorResume(error -> Mono.error(new NullBodyResponseException()));
     }
 }
