@@ -3,7 +3,6 @@ package org.example.accounts.service;
 import io.swagger.client.model.Currency;
 import lombok.RequiredArgsConstructor;
 import org.example.accounts.client.ConverterClient;
-import org.example.accounts.controller.AccountUpdatesController;
 import org.example.accounts.domain.AccountsRepository;
 import org.example.accounts.domain.CustomersRepository;
 import org.example.accounts.domain.entity.AccountEntity;
@@ -33,7 +32,7 @@ public class AccountsService {
     private final AccountsRepository accountsRepository;
     private final CustomersRepository customersRepository;
     private final ConverterClient converterClient;
-    private final AccountUpdatesController updatesController;
+    private final WebSocketNotificationService notificationService;
 
     public AccountResponse createAccount(CreateAccountDto createAccountDto) {
         Optional<CustomerEntity> customer = customersRepository.findById(createAccountDto.getCustomerId());
@@ -123,7 +122,7 @@ public class AccountsService {
     }
 
     private void sendUpdate(AccountEntity accountEntity) {
-        updatesController.sendUpdate(new AccountUpdateMessage()
+        notificationService.sendMessageToClient(new AccountUpdateMessage()
                 .setAccountNumber(accountEntity.getAccountNumber())
                 .setBalance(accountEntity.getBalance())
                 .setCurrency(accountEntity.getCurrency()));

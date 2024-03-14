@@ -2,7 +2,6 @@ package org.example.accounts.service;
 
 import io.swagger.client.model.Currency;
 import org.example.accounts.client.ConverterClient;
-import org.example.accounts.controller.AccountUpdatesController;
 import org.example.accounts.domain.AccountsRepository;
 import org.example.accounts.domain.CustomersRepository;
 import org.example.accounts.domain.entity.AccountEntity;
@@ -36,7 +35,7 @@ class AccountsServiceTest {
     @Mock
     private ConverterClient converterClient;
     @Mock
-    private AccountUpdatesController accountUpdatesController;
+    private WebSocketNotificationService service;
 
     @BeforeEach
     void setUp() {
