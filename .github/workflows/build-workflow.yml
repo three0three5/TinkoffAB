@@ -2,9 +2,9 @@ name: build-workflow
 run-name: ${{ github.actor }} ${{ github.event_name }}
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "hw5" ]
   pull_request:
-    branches: [ "feedback" ]
+    branches: [ "feedback", "main" ]
 
 env:
   docker-tag: ${{ github.head_ref || github.ref_name }}-${GITHUB_SHA::7}
