@@ -10,13 +10,22 @@ image:
   # Overrides the image tag whose default is the chart appVersion.
   tag: latest
 
-probes:
-  liveness:
-    path: /actuator/health/liveness
-    initDelay: 20
-  readiness:
-    path: /actuator/health/readiness
-    initDelay: 20
+livenessProbe:
+  httpGet: null
+  grpc:
+    port: 9090
+  initialDelaySeconds: 10
+  periodSeconds: 5
+  successThreshold: 1
+  timeoutSeconds: 2
+readinessProbe:
+  httpGet: null
+  grpc:
+    port: 9090
+  initialDelaySeconds: 10
+  periodSeconds: 5
+  successThreshold: 1
+  timeoutSeconds: 2
 
 imagePullSecrets: []
 nameOverride: ""

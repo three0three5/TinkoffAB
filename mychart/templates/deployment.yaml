@@ -45,16 +45,16 @@ spec:
             - name: http
               containerPort: {{ .Values.service.port }}
               protocol: TCP
+
           livenessProbe:
-            httpGet:
-              path: {{ .Values.probes.liveness.path }}
-              port: http
-            initialDelaySeconds: {{ .Values.probes.liveness.initDelay }}
+            { { - if .Values.livenessProbe } }
+            { { - toYaml .Values.livenessProbe | nindent 12 } }
+            { { - end } }
           readinessProbe:
-            httpGet:
-              path: {{ .Values.probes.readiness.path }}
-              port: http
-            initialDelaySeconds: {{ .Values.probes.readiness.initDelay }}
+            { { - if .Values.readinessProbe } }
+            { { - toYaml .Values.readinessProbe | nindent 12 } }
+            { { - end } }
+
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           {{- with .Values.volumeMounts }}
