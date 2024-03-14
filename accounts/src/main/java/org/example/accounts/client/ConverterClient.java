@@ -8,12 +8,12 @@ import lombok.RequiredArgsConstructor;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.example.accounts.dto.response.CurrencyResponseDto;
 import org.example.accounts.mapper.ProtoMapper;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 
 @RequiredArgsConstructor
-@Component
+@Service
 public class ConverterClient {
     private final ProtoMapper mapper;
     @GrpcClient("converterClient")

@@ -2,6 +2,10 @@ rates-service:
   url: ${RATES_URL:http://localhost:51128}
   rates-path: ${rates-service.url}/rates
 
+grpc:
+  server:
+    port: 9090
+
 spring:
   security:
     oauth2:

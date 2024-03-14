@@ -1,7 +1,9 @@
 grpc:
   client:
     converterClient:
-      address: ${CONVERTER_URL:localhost:9090}
+      address: ${CONVERTER_URL:localhost:55207}
+      keepAliveWithoutCalls: true
+      negotiation-type: PLAINTEXT
 
 spring:
   datasource:
@@ -20,7 +22,7 @@ spring:
         format_sql: true
         default_schema: public
     open-in-view: false
-    show-sql: true
+    show-sql: false
     generate-ddl: true
 
 logging:

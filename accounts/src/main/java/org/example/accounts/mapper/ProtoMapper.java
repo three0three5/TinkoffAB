@@ -38,10 +38,12 @@ public class ProtoMapper {
     }
 
     public DecimalValue mapBigDecimalToDecimalValue(BigDecimal value) {
+        ByteString bytes = ByteString.copyFrom(value.unscaledValue().toByteArray());
+        log.info("bytes: " + bytes);
         return DecimalValue.newBuilder()
                 .setScale(value.scale())
                 .setPrecision(value.precision())
-                .setValue(ByteString.copyFrom(value.unscaledValue().toByteArray()))
+                .setValue(bytes)
                 .build();
     }
 }

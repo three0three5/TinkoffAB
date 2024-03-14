@@ -47,13 +47,13 @@ spec:
               protocol: TCP
 
           livenessProbe:
-            { { - if .Values.livenessProbe } }
-            { { - toYaml .Values.livenessProbe | nindent 12 } }
-            { { - end } }
+            {{- if .Values.livenessProbe }}
+            {{- toYaml .Values.livenessProbe | nindent 12 }}
+            {{- end }}
           readinessProbe:
-            { { - if .Values.readinessProbe } }
-            { { - toYaml .Values.readinessProbe | nindent 12 } }
-            { { - end } }
+            {{- if .Values.readinessProbe }}
+            {{- toYaml .Values.readinessProbe | nindent 12 }}
+            {{- end }}
 
           resources:
             {{- toYaml .Values.resources | nindent 12 }}

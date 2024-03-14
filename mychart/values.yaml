@@ -11,21 +11,15 @@ image:
   tag: latest
 
 livenessProbe:
-  httpGet: null
-  grpc:
-    port: 9090
-  initialDelaySeconds: 10
-  periodSeconds: 5
-  successThreshold: 1
-  timeoutSeconds: 2
+  httpGet:
+    path: /actuator/health/liveness
+    port: http
+  initialDelaySeconds: 20
 readinessProbe:
-  httpGet: null
-  grpc:
-    port: 9090
-  initialDelaySeconds: 10
-  periodSeconds: 5
-  successThreshold: 1
-  timeoutSeconds: 2
+  httpGet:
+    path: /actuator/health/readiness
+    port: http
+  initialDelaySeconds: 20
 
 imagePullSecrets: []
 nameOverride: ""
