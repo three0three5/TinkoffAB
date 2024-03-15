@@ -1,7 +1,7 @@
 grpc:
   client:
     converterClient:
-      address: ${CONVERTER_URL:localhost:64022}
+      address: ${CONVERTER_URL:localhost:56977}
       keepAliveWithoutCalls: true
       negotiation-type: PLAINTEXT
 
