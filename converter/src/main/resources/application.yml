@@ -20,6 +20,8 @@ spring:
         provider:
           keycloak:
             token-uri: ${KEYCLOAK_URL:http://localhost:58525}/realms/${KEYCLOAK_REALM:hse}/protocol/openid-connect/token
+  main:
+    web-application-type: none
 
 logging:
   level:
