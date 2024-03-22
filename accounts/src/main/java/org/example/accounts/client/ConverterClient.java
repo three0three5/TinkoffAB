@@ -1,36 +1,34 @@
 package org.example.accounts.client;
 
+import com.example.grpc.ConverterServiceGrpc;
+import com.example.grpc.CurrencyRequest;
+import com.example.grpc.CurrencyResponse;
 import io.swagger.client.model.Currency;
 import lombok.RequiredArgsConstructor;
+import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.example.accounts.dto.response.CurrencyResponseDto;
-import org.example.accounts.exception.NullBodyResponseException;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.MediaType;
-import org.springframework.stereotype.Component;
-import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.util.UriComponentsBuilder;
-import reactor.core.publisher.Mono;
+import org.example.accounts.mapper.ProtoMapper;
+import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 
 @RequiredArgsConstructor
-@Component
+@Service
 public class ConverterClient {
-    private final WebClient webClient;
-    @Value("${converter-service.converter-path}")
-    private final String converterPath;
+    private final ProtoMapper mapper;
+    @GrpcClient("converterClient")
+    private ConverterServiceGrpc.ConverterServiceBlockingStub converterService;
 
     public CurrencyResponseDto convertCurrency(Currency from, Currency to, BigDecimal amount) {
-        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(converterPath)
-                .queryParam("from", from)
-                .queryParam("to", to)
-                .queryParam("amount", amount);
-        return webClient.get()
-                .uri(builder.build().toUri())
-                .accept(MediaType.APPLICATION_JSON)
-                .retrieve()
-                .bodyToMono(CurrencyResponseDto.class)
-                .onErrorResume(error -> Mono.error(new NullBodyResponseException()))
-                .block();
+        CurrencyRequest request = CurrencyRequest.newBuilder()
+                .setFrom(mapper.mapCurrencyToCurrencyProto(from))
+                .setTo(mapper.mapCurrencyToCurrencyProto(to))
+                .setAmount(mapper.mapBigDecimalToDecimalValue(amount))
+                .build();
+        CurrencyResponse response = converterService.getConvertedCurrency(request);
+        return new CurrencyResponseDto(
+                mapper.mapCurrencyProtoToCurrency(response.getBase()),
+                mapper.mapDecimalValueToBigDecimal(response.getConvertedAmount())
+        );
     }
 }

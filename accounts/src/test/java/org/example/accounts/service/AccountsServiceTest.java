@@ -34,6 +34,8 @@ class AccountsServiceTest {
     private CustomersRepository customersRepository;
     @Mock
     private ConverterClient converterClient;
+    @Mock
+    private WebSocketNotificationService service;
 
     @BeforeEach
     void setUp() {

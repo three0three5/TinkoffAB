@@ -7,6 +7,7 @@ import org.example.accounts.domain.AccountsRepository;
 import org.example.accounts.domain.CustomersRepository;
 import org.example.accounts.domain.entity.AccountEntity;
 import org.example.accounts.domain.entity.CustomerEntity;
+import org.example.accounts.dto.messages.AccountUpdateMessage;
 import org.example.accounts.dto.request.AmountRequest;
 import org.example.accounts.dto.request.CreateAccountDto;
 import org.example.accounts.dto.request.TransferRequest;
@@ -31,6 +32,7 @@ public class AccountsService {
     private final AccountsRepository accountsRepository;
     private final CustomersRepository customersRepository;
     private final ConverterClient converterClient;
+    private final WebSocketNotificationService notificationService;
 
     public AccountResponse createAccount(CreateAccountDto createAccountDto) {
         Optional<CustomerEntity> customer = customersRepository.findById(createAccountDto.getCustomerId());
@@ -41,6 +43,7 @@ public class AccountsService {
         accountEntity.setBalance(BigDecimal.ZERO);
         accountEntity.setOwner(customerEntity);
         accountEntity = accountsRepository.save(accountEntity);
+        sendUpdate(accountEntity);
         return new AccountResponse().setAccountNumber(accountEntity.getAccountNumber());
     }
 
@@ -63,6 +66,7 @@ public class AccountsService {
                 .add(amountRequest.getAmount())
                 .setScale(2, RoundingMode.HALF_EVEN)
         );
+        sendUpdate(accountEntity);
         accountsRepository.save(accountEntity);
     }
 
@@ -82,6 +86,8 @@ public class AccountsService {
                 .orElseThrow(CustomerAccountNotFoundException::new);
 
         makeTransfer(sender, receiver, amount);
+        sendUpdate(sender);
+        sendUpdate(receiver);
         accountsRepository.saveAll(List.of(sender, receiver));
     }
 
@@ -113,5 +119,12 @@ public class AccountsService {
                 .add(toAdd)
                 .setScale(2, RoundingMode.HALF_EVEN);
         receiver.setBalance(newReceiverBalance);
+    }
+
+    private void sendUpdate(AccountEntity accountEntity) {
+        notificationService.sendMessageToClient(new AccountUpdateMessage()
+                .setAccountNumber(accountEntity.getAccountNumber())
+                .setBalance(accountEntity.getBalance())
+                .setCurrency(accountEntity.getCurrency()));
     }
 }

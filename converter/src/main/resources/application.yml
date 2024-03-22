@@ -1,13 +1,14 @@
 rates-service:
-  url: ${RATES_URL:http://localhost:51128}
+  url: ${RATES_URL:http://localhost:63228}
   rates-path: ${rates-service.url}/rates
+
+grpc:
+  server:
+    port: 9090
 
 spring:
   security:
     oauth2:
-      resourceserver:
-        jwt:
-          jwk-set-uri: ${KEYCLOAK_URL:http://localhost:63608}/realms/hse/protocol/openid-connect/certs
       client:
         registration:
           converter:
@@ -18,7 +19,9 @@ spring:
             provider: keycloak
         provider:
           keycloak:
-            token-uri: ${KEYCLOAK_URL:http://localhost:63608}/realms/${KEYCLOAK_REALM:hse}/protocol/openid-connect/token
+            token-uri: ${KEYCLOAK_URL:http://localhost:58525}/realms/${KEYCLOAK_REALM:hse}/protocol/openid-connect/token
+  main:
+    web-application-type: none
 
 logging:
   level:
