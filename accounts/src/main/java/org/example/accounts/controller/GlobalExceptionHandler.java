@@ -1,5 +1,7 @@
 package org.example.accounts.controller;
 
+import com.giffing.bucket4j.spring.boot.starter.context.RateLimitException;
+import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.example.accounts.dto.response.ErrorResponseDto;
@@ -14,6 +16,9 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import static org.example.accounts.utils.Constants.RATE_LIMIT_MESSAGE;
+import static org.example.accounts.utils.Constants.SERVICE_UNAVAILABLE;
 
 @RestControllerAdvice
 @RequiredArgsConstructor
@@ -55,5 +60,17 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(IllegalArgumentException.class)
     public ErrorResponseDto handleIllegalArgumentException(IllegalArgumentException e) {
         return new ErrorResponseDto(e.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.TOO_MANY_REQUESTS)
+    @ExceptionHandler(RateLimitException.class)
+    public ErrorResponseDto handleRateLimit(RateLimitException e) {
+        return new ErrorResponseDto(RATE_LIMIT_MESSAGE);
+    }
+
+    @ResponseStatus(HttpStatus.SERVICE_UNAVAILABLE)
+    @ExceptionHandler(CallNotPermittedException.class)
+    public ErrorResponseDto handleRateLimit(CallNotPermittedException e) {
+        return new ErrorResponseDto(SERVICE_UNAVAILABLE);
     }
 }

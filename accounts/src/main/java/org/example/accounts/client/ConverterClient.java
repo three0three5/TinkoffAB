@@ -3,6 +3,7 @@ package org.example.accounts.client;
 import com.example.grpc.ConverterServiceGrpc;
 import com.example.grpc.CurrencyRequest;
 import com.example.grpc.CurrencyResponse;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.swagger.client.model.Currency;
 import lombok.RequiredArgsConstructor;
 import net.devh.boot.grpc.client.inject.GrpcClient;
@@ -19,6 +20,7 @@ public class ConverterClient {
     @GrpcClient("converterClient")
     private ConverterServiceGrpc.ConverterServiceBlockingStub converterService;
 
+    @CircuitBreaker(name = "converterService")
     public CurrencyResponseDto convertCurrency(Currency from, Currency to, BigDecimal amount) {
         CurrencyRequest request = CurrencyRequest.newBuilder()
                 .setFrom(mapper.mapCurrencyToCurrencyProto(from))

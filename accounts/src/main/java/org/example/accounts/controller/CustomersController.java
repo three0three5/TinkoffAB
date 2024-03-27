@@ -1,9 +1,10 @@
 package org.example.accounts.controller;
 
+import com.giffing.bucket4j.spring.boot.starter.context.RateLimiting;
+import io.swagger.client.model.Currency;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import io.swagger.client.model.Currency;
 import org.example.accounts.dto.request.CreateCustomerDto;
 import org.example.accounts.dto.response.BalanceResponse;
 import org.example.accounts.dto.response.CustomerIdResponse;
@@ -32,6 +33,9 @@ public class CustomersController {
         return ResponseEntity.ok(customerService.createCustomer(createCustomerDto));
     }
 
+    @RateLimiting(name = "default",
+            ratePerMethod = true,
+            cacheKey = "#customerId")
     @GetMapping("/{customerId}/balance")
     public ResponseEntity<BalanceResponse> getAllCustomerBalance(
             @PathVariable("customerId") Integer customerId,

@@ -6,6 +6,13 @@ grpc:
       negotiation-type: PLAINTEXT
 
 spring:
+  cache:
+    jcache:
+      provider: com.github.benmanes.caffeine.jcache.spi.CaffeineCachingProvider
+    cache-names:
+      - buckets
+    caffeine:
+      spec: maximumSize=1000000,expireAfterAccess=3600s
   datasource:
     url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:accounts}
     username: ${DB_USER:postgres}
@@ -37,3 +44,30 @@ management:
     health:
       probes:
         enabled: true
+
+bucket4j:
+  enabled: true
+  methods:
+    - name: default
+      cache-name: buckets
+      rate-limit:
+        bandwidths:
+          - capacity: 5
+            refill-capacity: 5
+            time: 1
+            unit: minutes
+            initial-capacity: 5
+            refill-speed: interval
+
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        wait-duration-in-open-state:
+          seconds: 10
+        failure-rate-threshold: 50
+        minimum-number-of-calls: 10
+        permitted-number-of-calls-in-half-open-state: 3
+    instances:
+      converterService:
+        base-config: default
