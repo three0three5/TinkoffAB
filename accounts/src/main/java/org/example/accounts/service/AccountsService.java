@@ -124,7 +124,7 @@ public class AccountsService {
     private void sendUpdate(AccountEntity accountEntity) {
         notificationService.sendMessageToClient(new AccountUpdateMessage()
                 .setAccountNumber(accountEntity.getAccountNumber())
-                .setBalance(accountEntity.getBalance())
+                .setBalance(accountEntity.getBalance().toString())
                 .setCurrency(accountEntity.getCurrency()));
     }
 }

@@ -68,6 +68,8 @@ resilience4j:
         failure-rate-threshold: 50
         minimum-number-of-calls: 10
         permitted-number-of-calls-in-half-open-state: 3
+        sliding-window-type: TIME_BASED
+        sliding-window-size: 60
     instances:
       converterService:
         base-config: default
