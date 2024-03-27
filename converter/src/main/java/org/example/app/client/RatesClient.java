@@ -3,6 +3,7 @@ package org.example.app.client;
 import io.swagger.client.model.RatesResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.example.app.config.RatesClientProperties;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
@@ -17,20 +18,17 @@ import java.time.Duration;
 @Slf4j
 public class RatesClient {
     private final WebClient webClient;
-    @Value("${rates-service.rates-path}")
-    private final String ratesPath;
+    private final RatesClientProperties properties;
 
     public Mono<RatesResponse> getRatesResponse() {
         return webClient.get()
-                .uri(ratesPath)
+                .uri(properties.getRatesPath())
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .bodyToMono(RatesResponse.class)
                 .retryWhen(Retry
-                        .backoff(3, Duration.ofMillis(50))
-                        .maxBackoff(Duration.ofMillis(150))
-                        .doBeforeRetry(signal -> {
-                            log.info("Retrying...");
-                        }));
+                        .backoff(properties.getMaxAttempts(), Duration.ofMillis(properties.getInitDelay()))
+                        .maxBackoff(Duration.ofMillis(properties.getMaxDelay()))
+                        .doBeforeRetry(signal -> log.info("Retrying...")));
     }
 }

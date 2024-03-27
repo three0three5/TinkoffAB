@@ -3,7 +3,6 @@ rates-service:
     maxAttempts: 3
     maxDelay: 150
     initDelay: 50
-    multiplier: 2
   url: ${RATES_URL:http://localhost:55741}
   rates-path: ${rates-service.url}/rates
 
