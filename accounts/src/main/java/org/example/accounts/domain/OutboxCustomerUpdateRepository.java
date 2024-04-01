@@ -9,9 +9,10 @@ import java.util.List;
 
 @Repository
 public interface OutboxCustomerUpdateRepository extends JpaRepository<OutboxCustomerUpdateEntity, Long> {
-    @Query(value = "SELECT * FROM outbox_updates\n" +
-            "ORDER BY created_at DESC\n" +
-            "FOR UPDATE SKIP LOCKED\n" +
-            "LIMIT :batchSize", nativeQuery = true)
+    @Query(value = """
+            SELECT * FROM outbox_updates
+            ORDER BY created_at DESC
+            FOR UPDATE SKIP LOCKED
+            LIMIT :batchSize""", nativeQuery = true)
     List<OutboxCustomerUpdateEntity> fetchMessages(int batchSize);
 }

@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.example.accounts.domain.entity.AccountEntity;
 import org.example.accounts.domain.entity.CustomerEntity;
 import org.example.accounts.dto.messages.AccountUpdateMessage;
-import org.example.accounts.dto.messages.CustomerUpdateMessage;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
