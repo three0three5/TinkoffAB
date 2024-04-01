@@ -36,6 +36,8 @@ class AccountsServiceTest {
     private ConverterClient converterClient;
     @Mock
     private WebSocketNotificationService service;
+    @Mock
+    private NotificationService notificationService;
 
     @BeforeEach
     void setUp() {
