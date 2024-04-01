@@ -1,9 +1,17 @@
 grpc:
   client:
     converterClient:
-      address: ${CONVERTER_URL:localhost:56977}
+      address: ${CONVERTER_URL:localhost:59385}
       keepAliveWithoutCalls: true
       negotiation-type: PLAINTEXT
+
+notification-service:
+  url: ${NOTIFICATION_SERVICE_URL:http://localhost:8081}
+  post-endpoint: ${notification-service.url}/notification
+
+scheduler:
+  cron: "0 */1 * * * *"
+  batch_size: 5
 
 spring:
   cache:

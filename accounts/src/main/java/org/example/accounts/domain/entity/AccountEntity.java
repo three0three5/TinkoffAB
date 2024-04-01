@@ -37,6 +37,6 @@ public class AccountEntity {
     private Currency currency;
 
     @JoinColumn(name = "owner", referencedColumnName="id")
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(optional = false)
     private CustomerEntity owner;
 }
