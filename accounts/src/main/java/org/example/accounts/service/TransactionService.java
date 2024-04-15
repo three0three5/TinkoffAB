@@ -41,7 +41,7 @@ public class TransactionService {
         );
         accountsRepository.save(accountEntity);
         return transactionEntityToTransactionResponse(
-                persistedTransaction(accountEntity, amountRequest.getAmount()));
+                persistedTransaction(accountEntity, amountRequest.getAmount(), true));
     }
 
     @Transactional
@@ -58,8 +58,8 @@ public class TransactionService {
         receiver.setBalance(newReceiverBalance);
 
         accountsRepository.saveAll(List.of(sender, receiver));
-        TransactionEntity toReturn = persistedTransaction(sender, amount.negate());
-        persistedTransaction(receiver, toAdd.setScale(2, RoundingMode.HALF_EVEN));
+        TransactionEntity toReturn = persistedTransaction(sender, amount.negate(), false);
+        persistedTransaction(receiver, toAdd.setScale(2, RoundingMode.HALF_EVEN), false);
         return transactionEntityToTransactionResponse(toReturn);
     }
 
@@ -77,11 +77,15 @@ public class TransactionService {
         return toAdd;
     }
 
-    private TransactionEntity persistedTransaction(AccountEntity e, BigDecimal amount) {
+    private TransactionEntity persistedTransaction(AccountEntity e, BigDecimal amount, boolean websocketOnly) {
         TransactionEntity toSave = new TransactionEntity();
         toSave.setAccount(e);
         toSave.setAmount(amount);
-        notificationService.sendUpdateWebsocket(e); // TODO spring events
+        if (websocketOnly) {
+            notificationService.sendUpdateWebsocket(e);
+        } else {
+            notificationService.sendUpdate(e, amount);
+        }
         return repository.save(toSave);
     }
 
