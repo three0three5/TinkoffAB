@@ -7,13 +7,16 @@ import org.example.accounts.dto.request.AmountRequest;
 import org.example.accounts.dto.request.CreateAccountDto;
 import org.example.accounts.dto.response.AccountBalanceResponse;
 import org.example.accounts.dto.response.AccountResponse;
+import org.example.accounts.dto.response.TransactionResponse;
 import org.example.accounts.service.AccountsService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -38,11 +41,11 @@ public class AccountsController {
     }
 
     @PostMapping("/{accountNumber}/top-up")
-    public ResponseEntity<?> topUpAccount(
+    @ResponseStatus(HttpStatus.OK)
+    public TransactionResponse topUpAccount(
             @PathVariable Integer accountNumber,
             @Valid @RequestBody AmountRequest amountRequest
     ) {
-        accountsService.topUpAccount(accountNumber, amountRequest);
-        return ResponseEntity.ok().build();
+        return accountsService.topUpAccount(accountNumber, amountRequest);
     }
 }
