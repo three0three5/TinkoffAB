@@ -1,7 +1,7 @@
 package com.example.idempotency.utils;
 
-import org.springframework.web.util.ContentCachingRequestWrapper;
-import org.springframework.web.util.ContentCachingResponseWrapper;
+import com.example.idempotency.serializer.RequestSerializable;
+import com.example.idempotency.serializer.ResponseSerializable;
 
-public record IdempotencyValue(ContentCachingRequestWrapper request, ContentCachingResponseWrapper response, boolean isDone) {
+public record IdempotencyValue(RequestSerializable request, ResponseSerializable response, boolean isDone) {
 }

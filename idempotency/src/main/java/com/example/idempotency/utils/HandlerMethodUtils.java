@@ -20,6 +20,12 @@ public class HandlerMethodUtils {
         return val;
     }
 
+    public long getTimeToLive(HandlerMethod handlerMethod) {
+        long val = handlerMethod.getMethodAnnotation(Idempotent.class).timeToLiveSeconds();
+        if (val == -1) return properties.getTimeToLiveSeconds();
+        return val;
+    }
+
     public KeyExtractor getExtractor(HandlerMethod handlerMethod) {
         Class<? extends KeyExtractor> clazz = handlerMethod.getMethodAnnotation(Idempotent.class).keyExtractor();
         try {

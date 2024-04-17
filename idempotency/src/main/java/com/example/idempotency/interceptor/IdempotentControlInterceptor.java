@@ -1,14 +1,14 @@
 package com.example.idempotency.interceptor;
 
-import com.example.idempotency.IdempotencyProperties;
 import com.example.idempotency.Idempotent;
 import com.example.idempotency.client.RedisIdempotencyClient;
+import com.example.idempotency.serializer.RequestSerializable;
+import com.example.idempotency.serializer.ResponseSerializable;
 import com.example.idempotency.utils.HandlerMethodUtils;
 import com.example.idempotency.utils.IdempotencyKey;
 import com.example.idempotency.utils.IdempotencyValue;
 import com.example.idempotency.utils.KeyExtractor;
 import com.example.idempotency.utils.RequestEqualityChecker;
-import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.NonNull;
@@ -21,8 +21,6 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.util.ContentCachingRequestWrapper;
 import org.springframework.web.util.ContentCachingResponseWrapper;
 
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Optional;
 
 @Component
@@ -45,8 +43,9 @@ public class IdempotentControlInterceptor implements HandlerInterceptor {
         log.info("Key: {}", headerKey);
 
         long lockExpirationTime = methodUtils.getLockExpirationTime(handlerMethod);
+        long ttlSeconds = methodUtils.getTimeToLive(handlerMethod);
         IdempotencyValue value = new IdempotencyValue(null, null, false);
-        boolean isAbsent = redisClient.setIfNotExists(headerKey.get(), value, lockExpirationTime);
+        boolean isAbsent = redisClient.setIfNotExists(headerKey.get(), value, lockExpirationTime, ttlSeconds);
 
         if (isAbsent) {
             log.info("lock acquired for key {}\n", headerKey.get());
@@ -68,7 +67,7 @@ public class IdempotentControlInterceptor implements HandlerInterceptor {
             response.setStatus(HttpServletResponse.SC_CONFLICT);
         } else {
             log.info("requests are equal");
-            responseCopy(response, value.response());
+            value.response().copyToHttpServletResponse(response);
         }
         return false;
     }
@@ -87,23 +86,10 @@ public class IdempotentControlInterceptor implements HandlerInterceptor {
         if (headerKey.isEmpty()) return;
         log.info("Key: {}", headerKey);
 
-        IdempotencyValue value = new IdempotencyValue(
-                (ContentCachingRequestWrapper)request,
-                (ContentCachingResponseWrapper)response, true);
-        redisClient.set(headerKey.get(), value);
-    }
-
-    private void responseCopy(HttpServletResponse copyTo, ContentCachingResponseWrapper copyFrom) {
-        byte[] content = copyFrom.getContentAsByteArray();
-        copyTo.setStatus(copyFrom.getStatus());
-        copyFrom.getHeaderNames().forEach(headerName -> copyTo.setHeader(headerName, copyFrom.getHeader(headerName)));
-        copyTo.setContentType(copyFrom.getContentType());
-        copyTo.setContentLength(content.length);
-        try (ServletOutputStream outputStream = copyTo.getOutputStream()) {
-            outputStream.write(content);
-            outputStream.flush();
-        } catch (IOException e) {
-            log.error("IOException: {}", e.getMessage());
-        }
+        RequestSerializable requestRedis = new RequestSerializable((ContentCachingRequestWrapper)request);
+        ResponseSerializable responseRedis = new ResponseSerializable((ContentCachingResponseWrapper)response);
+        IdempotencyValue value = new IdempotencyValue(requestRedis, responseRedis, true);
+        long ttlSeconds = methodUtils.getTimeToLive(handlerMethod);
+        redisClient.set(headerKey.get(), value, ttlSeconds);
     }
 }
