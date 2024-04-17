@@ -1,5 +1,6 @@
 package org.example.accounts.controller;
 
+import com.example.idempotency.Idempotent;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -40,12 +41,14 @@ public class AccountsController {
         return ResponseEntity.ok(accountsService.getAccountBalance(accountNumber));
     }
 
+    @Idempotent
     @PostMapping("/{accountNumber}/top-up")
     @ResponseStatus(HttpStatus.OK)
     public TransactionResponse topUpAccount(
             @PathVariable Integer accountNumber,
             @Valid @RequestBody AmountRequest amountRequest
     ) {
+        log.info("top up with {} {}", accountNumber, amountRequest);
         return accountsService.topUpAccount(accountNumber, amountRequest);
     }
 }

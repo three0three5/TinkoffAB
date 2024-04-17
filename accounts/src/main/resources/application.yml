@@ -86,3 +86,10 @@ resilience4j:
     instances:
       converterService:
         base-config: default
+
+idempotency:
+  enabled: true
+  time-to-live-seconds: 30
+  lock-expire-time: 60
+  redis-host: ${REDIS_HOST:localhost}
+  redis-port: ${REDIS_PORT:6379}

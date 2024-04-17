@@ -17,6 +17,7 @@
         <module>accounts</module>
         <module>converter</module>
         <module>proto-models</module>
+        <module>idempotency</module>
     </modules>
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
