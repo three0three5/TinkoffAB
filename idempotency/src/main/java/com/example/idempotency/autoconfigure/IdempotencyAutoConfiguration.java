@@ -5,7 +5,6 @@ import com.example.idempotency.client.RedisIdempotencyClient;
 import com.example.idempotency.filter.ContentCachingFilter;
 import com.example.idempotency.interceptor.IdempotentControlInterceptor;
 import com.example.idempotency.utils.HandlerMethodUtils;
-import com.example.idempotency.utils.IdempotencyKey;
 import com.example.idempotency.utils.IdempotencyValue;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
