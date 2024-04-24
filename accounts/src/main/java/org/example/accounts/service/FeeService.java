@@ -46,7 +46,7 @@ public class FeeService {
         init();
     }
 
-    @Transactional("kafkaTransactionManager")
+    //@Transactional("kafkaTransactionManager")
     public void sendToKafka(Object msg) {
         kafkaTemplate.sendDefault(msg);
     }

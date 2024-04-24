@@ -2,6 +2,7 @@ package org.example.accounts.service;
 
 import io.swagger.client.model.Currency;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.example.accounts.client.ConverterClient;
 import org.example.accounts.domain.AccountsRepository;
 import org.example.accounts.domain.TransactionRepository;
@@ -19,6 +20,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class TransactionService {
     private final TransactionRepository repository;
     private final AccountsRepository accountsRepository;
@@ -48,17 +50,22 @@ public class TransactionService {
     public TransactionResponse makeTransfer(AccountEntity sender, AccountEntity receiver,
                                             BigDecimal amount, BigDecimal fee) {
         Currency base = sender.getCurrency();
+        log.info("Subtracting {} from sender", amount);
         BigDecimal newSenderBalance = sender.getBalance()
                 .subtract(amount)
                 .setScale(2, RoundingMode.HALF_EVEN);
         sender.setBalance(newSenderBalance);
+        log.info("new sender balance: {}", newSenderBalance);
 
         BigDecimal amountWithFee = amount.subtract(amount.multiply(fee));
+        log.info("amount with fee: {}", amountWithFee);
         BigDecimal toAdd = getAmountToAdd(sender, receiver, amountWithFee, base);
+        log.info("to add: {}", toAdd);
         BigDecimal newReceiverBalance = receiver.getBalance()
                 .add(toAdd)
                 .setScale(2, RoundingMode.HALF_EVEN);
         receiver.setBalance(newReceiverBalance);
+        log.info("new receiver balance: {}", newReceiverBalance);
 
         accountsRepository.saveAll(List.of(sender, receiver));
         TransactionEntity toReturn = persistedTransaction(sender, amount.negate(), false);
