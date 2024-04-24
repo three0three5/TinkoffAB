@@ -49,10 +49,12 @@ public class TransactionService {
                                             BigDecimal amount, BigDecimal fee) {
         Currency base = sender.getCurrency();
         BigDecimal newSenderBalance = sender.getBalance()
-                .subtract(amount.add(amount.multiply(fee)))
+                .subtract(amount)
                 .setScale(2, RoundingMode.HALF_EVEN);
         sender.setBalance(newSenderBalance);
-        BigDecimal toAdd = getAmountToAdd(sender, receiver, amount, base);
+
+        BigDecimal amountWithFee = amount.subtract(amount.multiply(fee));
+        BigDecimal toAdd = getAmountToAdd(sender, receiver, amountWithFee, base);
         BigDecimal newReceiverBalance = receiver.getBalance()
                 .add(toAdd)
                 .setScale(2, RoundingMode.HALF_EVEN);

@@ -69,7 +69,7 @@ public class AccountsService {
         AccountEntity sender = accountsRepository
                 .findById(transferRequest.getSenderAccount())
                 .orElseThrow(CustomerAccountNotFoundException::new);
-        checkBalance(transferRequest, sender, fee);
+        checkBalance(transferRequest, sender);
         AccountEntity receiver = accountsRepository
                 .findById(transferRequest.getReceiverAccount())
                 .orElseThrow(CustomerAccountNotFoundException::new);
@@ -77,9 +77,8 @@ public class AccountsService {
         return transactionService.makeTransfer(sender, receiver, amount, fee);
     }
 
-    private static void checkBalance(TransferRequest transferRequest, AccountEntity sender, BigDecimal fee) {
+    private static void checkBalance(TransferRequest transferRequest, AccountEntity sender) {
         BigDecimal toSub = transferRequest.getAmountInSenderCurrency();
-        toSub = toSub.add(toSub.multiply(fee));
         if (sender.getBalance()
                 .subtract(toSub)
                 .compareTo(BigDecimal.ZERO) < 0) {
