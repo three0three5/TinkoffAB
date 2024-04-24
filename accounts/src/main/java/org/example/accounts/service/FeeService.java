@@ -42,6 +42,7 @@ public class FeeService {
     public void consumeUpdateMessage(FeeUpdateMessage message) {
         log.info("Received message: {}", message);
         if (!FeeUpdateMessage.UpdateAction.UPDATE_FEE.equals(message.getAction())) return;
+        cacheManager.getCache("fee").clear();
         init();
     }
 
@@ -54,7 +55,7 @@ public class FeeService {
     public void init() {
         log.info("cache update");
         BigDecimal result = getFee();
-        cacheManager.getCache("fee").put("", result);
+        cacheManager.getCache("fee").put("fee", result);
         log.info("put {} in cache", result);
     }
 }
