@@ -1,5 +1,6 @@
 package org.example.accounts.service;
 
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.accounts.domain.FeeRepository;
@@ -41,13 +42,19 @@ public class FeeService {
     public void consumeUpdateMessage(FeeUpdateMessage message) {
         log.info("Received message: {}", message);
         if (!FeeUpdateMessage.UpdateAction.UPDATE_FEE.equals(message.getAction())) return;
-        BigDecimal result = getFee();
-        cacheManager.getCache("fee").clear();
-        log.info("put {} in cache", result);
+        init();
     }
 
     @Transactional("kafkaTransactionManager")
     public void sendToKafka(Object msg) {
         kafkaTemplate.sendDefault(msg);
+    }
+
+    @PostConstruct
+    public void init() {
+        log.info("cache update");
+        BigDecimal result = getFee();
+        cacheManager.getCache("fee").put("", result);
+        log.info("put {} in cache", result);
     }
 }
