@@ -68,7 +68,9 @@ public class TransactionService {
         log.info("new receiver balance: {}", newReceiverBalance);
 
         accountsRepository.saveAll(List.of(sender, receiver));
+        log.info("persisting transaction of sender: ");
         TransactionEntity toReturn = persistedTransaction(sender, amount.negate(), false);
+        log.info("persisting transaction of receiver: ");
         persistedTransaction(receiver, toAdd.setScale(2, RoundingMode.HALF_EVEN), false);
         return transactionEntityToTransactionResponse(toReturn);
     }
@@ -91,6 +93,7 @@ public class TransactionService {
         TransactionEntity toSave = new TransactionEntity();
         toSave.setAccount(e);
         toSave.setAmount(amount);
+        log.info("persisting transaction {} with amount {}", toSave.getTransactionId(), toSave.getAmount());
         if (websocketOnly) {
             notificationService.sendUpdateWebsocket(e);
         } else {
