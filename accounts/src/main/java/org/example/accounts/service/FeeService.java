@@ -8,7 +8,6 @@ import org.example.accounts.dto.FeeDto;
 import org.example.accounts.dto.messages.FeeUpdateMessage;
 import org.example.accounts.utils.Constants;
 import org.springframework.cache.CacheManager;
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
