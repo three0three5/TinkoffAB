@@ -19,6 +19,7 @@ spring:
       provider: com.github.benmanes.caffeine.jcache.spi.CaffeineCachingProvider
     cache-names:
       - buckets
+      - fee
     caffeine:
       spec: maximumSize=1000000,expireAfterAccess=3600s
   datasource:
@@ -31,6 +32,21 @@ spring:
     redis:
       host: ${REDIS_HOST:localhost}
       port: ${REDIS_PORT:6379}
+
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9094}
+    consumer:
+      group-id: "fee.update.group"
+      enable-auto-commit: false
+      auto-offset-reset: latest
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "org.example.accounts.dto.messages"
+    producer:
+      transaction-id-prefix: tx-
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    template:
+      default-topic: ${KAFKA_TOPIC:topic}
 
   jpa:
     hibernate:

@@ -11,4 +11,6 @@ public class Constants {
     public static final String RATE_LIMIT_MESSAGE = "Rate limit exceeded";
     public static final String SERVICE_UNAVAILABLE = "Converter is unavailable";
     public static final String CUSTOMER_UPDATE_MESSAGE_TEMPLATE = "Счет %s. Операция: %s. Баланс: %s";
+    public static final String DEFAULT_FEE_ENTITY_ID = "TRANSFERS";
+    public static final String FEE_COLUMN_DEFINITION = "DECIMAL(9,8) CHECK (value >= 0.0 AND value <= 1.0)";
 }

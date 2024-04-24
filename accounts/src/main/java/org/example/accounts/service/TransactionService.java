@@ -45,10 +45,11 @@ public class TransactionService {
     }
 
     @Transactional
-    public TransactionResponse makeTransfer(AccountEntity sender, AccountEntity receiver, BigDecimal amount) {
+    public TransactionResponse makeTransfer(AccountEntity sender, AccountEntity receiver,
+                                            BigDecimal amount, BigDecimal fee) {
         Currency base = sender.getCurrency();
         BigDecimal newSenderBalance = sender.getBalance()
-                .subtract(amount)
+                .subtract(amount.add(amount.multiply(fee)))
                 .setScale(2, RoundingMode.HALF_EVEN);
         sender.setBalance(newSenderBalance);
         BigDecimal toAdd = getAmountToAdd(sender, receiver, amount, base);

@@ -30,6 +30,7 @@ public class AccountsService {
     private final CustomersRepository customersRepository;
     private final NotificationService notificationService;
     private final TransactionService transactionService;
+    private final FeeService feeService;
 
     public AccountResponse createAccount(CreateAccountDto createAccountDto) {
         Optional<CustomerEntity> customer = customersRepository.findById(createAccountDto.getCustomerId());
@@ -64,20 +65,23 @@ public class AccountsService {
         if (amount.compareTo(BigDecimal.ZERO) <= 0)
             throw new IllegalArgumentException("Amount not valid");
 
+        BigDecimal fee = feeService.getFee();
         AccountEntity sender = accountsRepository
                 .findById(transferRequest.getSenderAccount())
                 .orElseThrow(CustomerAccountNotFoundException::new);
-        checkBalance(transferRequest, sender);
+        checkBalance(transferRequest, sender, fee);
         AccountEntity receiver = accountsRepository
                 .findById(transferRequest.getReceiverAccount())
                 .orElseThrow(CustomerAccountNotFoundException::new);
 
-        return transactionService.makeTransfer(sender, receiver, amount);
+        return transactionService.makeTransfer(sender, receiver, amount, fee);
     }
 
-    private static void checkBalance(TransferRequest transferRequest, AccountEntity sender) {
+    private static void checkBalance(TransferRequest transferRequest, AccountEntity sender, BigDecimal fee) {
+        BigDecimal toSub = transferRequest.getAmountInSenderCurrency();
+        toSub = toSub.add(toSub.multiply(fee));
         if (sender.getBalance()
-                .subtract(transferRequest.getAmountInSenderCurrency())
+                .subtract(toSub)
                 .compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException(NOT_ENOUGH_MONEY);
         }
