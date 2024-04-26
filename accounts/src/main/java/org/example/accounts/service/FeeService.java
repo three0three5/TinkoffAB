@@ -25,7 +25,7 @@ public class FeeService {
     private final KafkaTemplate<String, Object> kafkaTemplate;
     private final CacheManager cacheManager;
 
-    @Transactional
+    //@Transactional
     public FeeDto update(FeeDto feeDto) {
         log.info("update with {}", feeDto);
         repository.createOrUpdate(feeDto.getFee(), Constants.DEFAULT_FEE_ENTITY_ID);
@@ -35,7 +35,9 @@ public class FeeService {
 
     @Cacheable(value = "fee")
     public BigDecimal getFee() {
-        return repository.findById(Constants.DEFAULT_FEE_ENTITY_ID).map(FeeEntity::getValue).orElse(BigDecimal.ZERO);
+        var result = repository.findById(Constants.DEFAULT_FEE_ENTITY_ID).map(FeeEntity::getValue).orElse(BigDecimal.ZERO);
+        log.info("non cached get request with result {}", result);
+        return result;
     }
 
     @KafkaListener(topics = "#{'${spring.kafka.template.default-topic}'.split(',')}")
@@ -43,7 +45,6 @@ public class FeeService {
         log.info("Received message: {}", message);
         if (!FeeUpdateMessage.UpdateAction.UPDATE_FEE.equals(message.getAction())) return;
         cacheManager.getCache("fee").clear();
-        init();
     }
 
     //@Transactional("kafkaTransactionManager")

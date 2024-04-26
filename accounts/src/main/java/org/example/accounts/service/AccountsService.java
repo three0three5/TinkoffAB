@@ -1,6 +1,7 @@
 package org.example.accounts.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.example.accounts.domain.AccountsRepository;
 import org.example.accounts.domain.CustomersRepository;
 import org.example.accounts.domain.entity.AccountEntity;
@@ -25,6 +26,7 @@ import static org.example.accounts.utils.Constants.NOT_ENOUGH_MONEY;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AccountsService {
     private final AccountsRepository accountsRepository;
     private final CustomersRepository customersRepository;
@@ -61,11 +63,13 @@ public class AccountsService {
 
     @Transactional
     public TransactionResponse transfer(TransferRequest transferRequest) {
+        log.info("Transfer from {} to {}", transferRequest.getSenderAccount(), transferRequest.getReceiverAccount());
         BigDecimal amount = transferRequest.getAmountInSenderCurrency().setScale(2, RoundingMode.HALF_EVEN);
         if (amount.compareTo(BigDecimal.ZERO) <= 0)
             throw new IllegalArgumentException("Amount not valid");
 
         BigDecimal fee = feeService.getFee();
+        log.info("fee equals: {}", fee);
         AccountEntity sender = accountsRepository
                 .findById(transferRequest.getSenderAccount())
                 .orElseThrow(CustomerAccountNotFoundException::new);

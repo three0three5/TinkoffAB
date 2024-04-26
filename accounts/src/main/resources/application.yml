@@ -43,7 +43,6 @@ spring:
       properties:
         spring.json.trusted.packages: "org.example.accounts.dto.messages"
     producer:
-      transaction-id-prefix: tx-
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
     template:
       default-topic: ${KAFKA_TOPIC:topic}
