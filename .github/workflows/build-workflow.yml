@@ -19,6 +19,9 @@ jobs:
       converter-image-name: orobtsovv/converter
       accounts-image-name: orobtsovv/accounts
       image-tag: ${{ needs.build.outputs.docker-tag }}
+    secrets:
+      HSE_LOKI_TOKEN: ${{ secrets.HSE_LOKI_TOKEN }}
+
   
   build:
     runs-on: ubuntu-latest

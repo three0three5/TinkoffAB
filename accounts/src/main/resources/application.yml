@@ -36,7 +36,7 @@ spring:
   kafka:
     bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9094}
     consumer:
-      group-id: "fee.update.group"
+      group-id: "fee.update.group" // TODO проверить репликацию
       enable-auto-commit: false
       auto-offset-reset: latest
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
