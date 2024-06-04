@@ -2,7 +2,6 @@ package org.example.accounts.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 import lombok.extern.slf4j.Slf4j;
 import org.example.accounts.dto.request.TransferRequest;
 import org.example.accounts.dto.response.TransactionResponse;

@@ -3,7 +3,6 @@ package org.example.accounts.service;
 import io.micrometer.observation.annotation.Observed;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 import lombok.extern.slf4j.Slf4j;
 import org.example.accounts.domain.FeeRepository;
 import org.example.accounts.domain.entity.FeeEntity;

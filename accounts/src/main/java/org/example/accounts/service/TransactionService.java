@@ -3,7 +3,6 @@ package org.example.accounts.service;
 import io.micrometer.observation.annotation.Observed;
 import io.swagger.client.model.Currency;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 import lombok.extern.slf4j.Slf4j;
 import org.example.accounts.client.ConverterClient;
 import org.example.accounts.domain.AccountsRepository;

@@ -2,7 +2,6 @@ package org.example.accounts.service;
 
 import io.micrometer.observation.annotation.Observed;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 import lombok.extern.slf4j.Slf4j;
 import org.example.accounts.domain.AccountsRepository;
 import org.example.accounts.domain.CustomersRepository;
@@ -16,8 +15,6 @@ import org.example.accounts.dto.response.AccountResponse;
 import org.example.accounts.dto.response.TransactionResponse;
 import org.example.accounts.exception.CustomerAccountNotFoundException;
 import org.example.accounts.exception.CustomerNotFoundException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
