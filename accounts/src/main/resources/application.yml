@@ -1,7 +1,7 @@
 grpc:
   client:
     converterClient:
-      address: ${CONVERTER_URL:localhost:59385}
+      address: ${CONVERTER_URL:localhost:9090}
       keepAliveWithoutCalls: true
       negotiation-type: PLAINTEXT
 
@@ -36,7 +36,7 @@ spring:
   kafka:
     bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9094}
     consumer:
-      group-id: "fee.update.group" # TODO проверить репликацию
+      group-id: "fee.update.group" # TODO проверить репликацию, из 1 партиции не будут читать разные поды
       enable-auto-commit: false
       auto-offset-reset: latest
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
@@ -64,10 +64,15 @@ spring:
     web-application-type: servlet
 
 logging:
+  pattern:
+    level: "%d{yyyy-MM-dd HH:mm:ss.SSS} %5p [${spring.application.name:},TRACEID=%X{traceId:-},%X{spanId:-}]"
   level:
     root: info
 
 management:
+  tracing:
+    sampling:
+      probability: 1.0
   endpoint:
     health:
       probes:

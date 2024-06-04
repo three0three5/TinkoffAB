@@ -3,7 +3,7 @@ rates-service:
     maxAttempts: 3
     maxDelay: 150
     initDelay: 50
-  url: ${RATES_URL:http://localhost:55741}
+  url: ${RATES_URL:http://localhost:52652}
   rates-path: ${rates-service.url}/rates
 
 grpc:
@@ -19,19 +19,24 @@ spring:
             client-id: ${CLIENT_ID}
             client-secret: ${CLIENT_SECRET}
             authorization-grant-type: client_credentials
-            client-authentication-method: basic
+            client-authentication-method: client_secret_basic
             provider: keycloak
         provider:
           keycloak:
-            token-uri: ${KEYCLOAK_URL:http://localhost:58525}/realms/${KEYCLOAK_REALM:hse}/protocol/openid-connect/token
+            token-uri: ${KEYCLOAK_URL:http://localhost:52691}/realms/${KEYCLOAK_REALM:hse}/protocol/openid-connect/token
   main:
     web-application-type: none
 
 logging:
+  pattern:
+    level: "%d{yyyy-MM-dd HH:mm:ss.SSS} %5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]"
   level:
     root: info
 
 management:
+  tracing:
+    sampling:
+      probability: 1.0
   endpoint:
     health:
       probes:

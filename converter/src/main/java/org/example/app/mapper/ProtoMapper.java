@@ -3,6 +3,7 @@ package org.example.app.mapper;
 import com.example.grpc.CurrencyProto;
 import com.example.grpc.DecimalValue;
 import com.google.protobuf.ByteString;
+import io.micrometer.observation.annotation.Observed;
 import io.swagger.client.model.Currency;
 import lombok.extern.slf4j.Slf4j;
 import org.example.app.exception.CurrencyNotAvailableException;
@@ -14,6 +15,7 @@ import java.math.MathContext;
 
 @Slf4j
 @Component
+@Observed(name = "ProtoMapper")
 public class ProtoMapper {
     public BigDecimal mapDecimalValueToBigDecimal(DecimalValue proto) {
         MathContext mc = new java.math.MathContext(proto.getPrecision());

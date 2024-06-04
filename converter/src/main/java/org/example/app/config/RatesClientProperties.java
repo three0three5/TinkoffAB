@@ -12,6 +12,9 @@ public class RatesClientProperties {
     @Value("${rates-service.rates-path}")
     private final String ratesPath;
 
+    @Value("${rates-service.url}")
+    private final String ratesUrl;
+
     @Value("${rates-service.retry.maxAttempts}")
     private final int maxAttempts;
 

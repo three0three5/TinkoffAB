@@ -1,11 +1,13 @@
 package org.example.app.config;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.security.oauth2.client.AuthorizedClientServiceReactiveOAuth2AuthorizedClientManager;
 import org.springframework.security.oauth2.client.InMemoryReactiveOAuth2AuthorizedClientService;
+import org.springframework.security.oauth2.client.ReactiveOAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.registration.InMemoryReactiveClientRegistrationRepository;
 import org.springframework.security.oauth2.client.registration.ReactiveClientRegistrationRepository;
@@ -19,39 +21,32 @@ import java.time.Duration;
 import static org.example.app.utils.Constants.REGISTRATION_ID;
 
 @Configuration
+@RequiredArgsConstructor
 public class WebClientConfig {
-    // https://stackoverflow.com/questions/63022635/replacement-for-unauthenticatedserveroauth2authorizedclientrepository
+    private final RatesClientProperties properties;
+
     @Bean
-    ReactiveClientRegistrationRepository getRegistration(
-            @Value("${spring.security.oauth2.client.provider.keycloak.token-uri}") String token_uri,
-            @Value("${spring.security.oauth2.client.registration.converter.client-id}") String client_id,
-            @Value("${spring.security.oauth2.client.registration.converter.client-secret}") String client_secret
-    ) {
-        ClientRegistration registration = ClientRegistration
-                .withRegistrationId(REGISTRATION_ID)
-                .tokenUri(token_uri)
-                .clientId(client_id)
-                .clientSecret(client_secret)
-                .authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
+    public WebClient ratesWebClient(
+            WebClient.Builder builder,
+            ReactiveClientRegistrationRepository clientRegistrations,
+            ReactiveOAuth2AuthorizedClientService authorizedClients) {
+        var oauth = new ServerOAuth2AuthorizedClientExchangeFilterFunction(
+                new AuthorizedClientServiceReactiveOAuth2AuthorizedClientManager(
+                        clientRegistrations, authorizedClients
+                )
+        );
+        oauth.setDefaultClientRegistrationId(REGISTRATION_ID);
+
+        return builder
+                .baseUrl(properties.getRatesUrl())
+                .filter(oauth)
+                .clientConnector(new ReactorClientHttpConnector(httpClient()))
                 .build();
-        return new InMemoryReactiveClientRegistrationRepository(registration);
     }
 
     @Bean
-    WebClient webClient(ReactiveClientRegistrationRepository clientRegistrations) {
-        InMemoryReactiveOAuth2AuthorizedClientService clientService =
-                new InMemoryReactiveOAuth2AuthorizedClientService(clientRegistrations);
-        AuthorizedClientServiceReactiveOAuth2AuthorizedClientManager authorizedClientManager =
-                new AuthorizedClientServiceReactiveOAuth2AuthorizedClientManager(clientRegistrations, clientService);
-        ServerOAuth2AuthorizedClientExchangeFilterFunction oauth =
-                new ServerOAuth2AuthorizedClientExchangeFilterFunction(authorizedClientManager);
-        oauth.setDefaultClientRegistrationId(REGISTRATION_ID);
-
-        HttpClient client = HttpClient.create()
-                .responseTimeout(Duration.ofSeconds(20));
-        return WebClient.builder()
-                .clientConnector(new ReactorClientHttpConnector(client))
-                .filter(oauth)
-                .build();
+    public HttpClient httpClient() {
+        return HttpClient.create()
+                .responseTimeout(Duration.ofSeconds(10));
     }
 }

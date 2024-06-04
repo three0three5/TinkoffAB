@@ -1,6 +1,8 @@
 package org.example.accounts.service;
 
+import io.micrometer.observation.annotation.Observed;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import lombok.extern.slf4j.Slf4j;
 import org.example.accounts.domain.AccountsRepository;
 import org.example.accounts.domain.CustomersRepository;
@@ -14,6 +16,8 @@ import org.example.accounts.dto.response.AccountResponse;
 import org.example.accounts.dto.response.TransactionResponse;
 import org.example.accounts.exception.CustomerAccountNotFoundException;
 import org.example.accounts.exception.CustomerNotFoundException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,6 +30,7 @@ import static org.example.accounts.utils.Constants.NOT_ENOUGH_MONEY;
 
 @Service
 @RequiredArgsConstructor
+@Observed(name = "AccountsService")
 @Slf4j
 public class AccountsService {
     private final AccountsRepository accountsRepository;
@@ -48,6 +53,7 @@ public class AccountsService {
     }
 
     public AccountBalanceResponse getAccountBalance(Integer accountNumber) {
+        log.info("get balance for {}", accountNumber);
         AccountEntity entity = accountsRepository.findById(accountNumber)
                 .orElseThrow(CustomerAccountNotFoundException::new);
         return new AccountBalanceResponse()

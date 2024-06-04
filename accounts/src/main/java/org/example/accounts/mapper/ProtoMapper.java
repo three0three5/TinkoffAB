@@ -4,6 +4,7 @@ import com.example.grpc.CurrencyProto;
 import com.example.grpc.DecimalValue;
 import com.google.protobuf.ByteString;
 import io.swagger.client.model.Currency;
+import lombok.extern.log4j.Log4j2;
 import lombok.extern.slf4j.Slf4j;
 import org.example.accounts.exception.InvalidCurrencyParamException;
 import org.springframework.stereotype.Component;

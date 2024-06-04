@@ -1,6 +1,9 @@
 package org.example.accounts.service;
 
+import io.micrometer.observation.annotation.Observed;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.example.accounts.domain.entity.AccountEntity;
 import org.example.accounts.domain.entity.CustomerEntity;
 import org.example.accounts.dto.messages.AccountUpdateMessage;
@@ -14,12 +17,15 @@ import static org.example.accounts.utils.Constants.CUSTOMER_UPDATE_MESSAGE_TEMPL
 
 @Service
 @RequiredArgsConstructor
+@Observed(name = "NotificationService")
+@Slf4j
 public class NotificationService {
     private final WebSocketNotificationService webSocketService;
     private final MessageRelayService messageRelayService;
 
     @Transactional
     public void sendUpdate(AccountEntity accountEntity, BigDecimal diff) {
+        log.info("sending update for account {}", accountEntity.getAccountNumber());
         sendUpdateOutbox(accountEntity, diff);
         sendUpdateWebsocket(accountEntity);
     }

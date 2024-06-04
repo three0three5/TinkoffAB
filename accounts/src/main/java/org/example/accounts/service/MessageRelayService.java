@@ -1,6 +1,8 @@
 package org.example.accounts.service;
 
+import io.micrometer.observation.annotation.Observed;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import lombok.extern.slf4j.Slf4j;
 import org.example.accounts.client.NotificationServiceClient;
 import org.example.accounts.domain.OutboxCustomerUpdateRepository;
@@ -17,6 +19,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Observed(name = "MessageRelayService")
 public class MessageRelayService {
     private final NotificationServiceClient client;
     private final OutboxCustomerUpdateRepository updateRepository;

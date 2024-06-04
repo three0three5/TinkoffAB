@@ -16,11 +16,11 @@ import java.time.Duration;
 @Component
 @Slf4j
 public class RatesClient {
-    private final WebClient webClient;
+    private final WebClient ratesWebClient;
     private final RatesClientProperties properties;
 
     public Mono<RatesResponse> getRatesResponse() {
-        return webClient.get()
+        return ratesWebClient.get()
                 .uri(properties.getRatesPath())
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
