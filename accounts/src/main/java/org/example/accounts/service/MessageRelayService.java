@@ -7,10 +7,12 @@ import org.example.accounts.client.NotificationServiceClient;
 import org.example.accounts.domain.OutboxCustomerUpdateRepository;
 import org.example.accounts.domain.entity.CustomerEntity;
 import org.example.accounts.domain.entity.OutboxCustomerUpdateEntity;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -24,6 +26,7 @@ public class MessageRelayService {
     private final OutboxCustomerUpdateRepository updateRepository;
     @Value("${scheduler.batch_size}")
     private final int batchSize;
+    private final MessageRelayService self;
 
     public void persist(CustomerEntity customer, String message) {
         updateRepository.save(new OutboxCustomerUpdateEntity()
@@ -39,8 +42,13 @@ public class MessageRelayService {
         List<OutboxCustomerUpdateEntity> entities = updateRepository.fetchMessages(batchSize);
         entities.forEach(e -> {
             log.info("sending to customer %d".formatted(e.getCustomer().getId()));
-            client.sendNotification(e);
-            updateRepository.delete(e);
+            self.sendWithDelete(e);
         });
+    }
+
+    @Transactional(propagation = Propagation.NESTED)
+    public void sendWithDelete(OutboxCustomerUpdateEntity e) {
+        client.sendNotification(e);
+        updateRepository.delete(e);
     }
 }
