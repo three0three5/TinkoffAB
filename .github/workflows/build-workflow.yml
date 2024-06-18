@@ -13,7 +13,7 @@ jobs:
   autotest:
     needs: [build]
     if: github.event_name == 'pull_request'
-    uses: ./autotests-hw9-logs.yml
+    uses: ./autotests-hw9-logs.yml@main
     with:
       chart-path: ./mychart
       converter-image-name: orobtsovv/converter
