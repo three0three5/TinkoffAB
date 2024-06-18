@@ -25,8 +25,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-
-
       - name: Start minikube
         uses: medyagh/setup-minikube@master
         with:
@@ -76,7 +74,7 @@ jobs:
       - name: Deploy rates
         continue-on-error: true
         run: |
-          helm upgrade --install rates $CHART_PATH \
+          helm upgrade --install rates ${{ inputs.chart-path }} \
             --set fullnameOverride=rates \
             --set image.repository=miraclewisp/hse-rates \
             --set image.tag=auth-amd64 \
@@ -86,20 +84,20 @@ jobs:
       - name: Deploy converter
         continue-on-error: true
         run: |
-          helm upgrade --install converter $CHART_PATH \
+          helm upgrade --install converter ${{ inputs.chart-path }} \
             --set fullnameOverride=converter \
-            --set image.repository=$CONVERTER_IMAGE_NAME \
-            --set image.tag=$IMAGE_TAG \
+            --set image.repository=${{ inputs.converter-image-name }} \
+            --set image.tag=${{ inputs.image-tag }} \
             -f tests/hw9/converter-values.yml \
             --wait --timeout 180s
 
       - name: Deploy accounts
         continue-on-error: true
         run: |
-          helm upgrade --install accounts $CHART_PATH \
+          helm upgrade --install accounts ${{ inputs.chart-path }} \
             --set fullnameOverride=accounts \
-            --set image.repository=$ACCOUNTS_IMAGE_NAME \
-            --set image.tag=$IMAGE_TAG \
+            --set image.repository=${{ inputs.accounts-image-name }} \
+            --set image.tag=${{ inputs.image-tag }} \
             -f tests/hw9/accounts-values.yml \
             --wait --timeout 180s
 
