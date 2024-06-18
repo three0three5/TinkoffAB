@@ -3,7 +3,6 @@ package org.example.accounts.service;
 import io.micrometer.observation.annotation.Observed;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.example.accounts.client.NotificationServiceClient;
 import org.example.accounts.domain.OutboxCustomerUpdateRepository;
 import org.example.accounts.domain.entity.CustomerEntity;
 import org.example.accounts.domain.entity.OutboxCustomerUpdateEntity;
@@ -20,10 +19,10 @@ import java.util.List;
 @Slf4j
 @Observed(name = "MessageRelayService")
 public class MessageRelayService {
-    private final NotificationServiceClient client;
-    private final OutboxCustomerUpdateRepository updateRepository;
     @Value("${scheduler.batch_size}")
     private final int batchSize;
+    private final OutboxSenderService outboxSender;
+    private final OutboxCustomerUpdateRepository updateRepository;
 
     public void persist(CustomerEntity customer, String message) {
         updateRepository.save(new OutboxCustomerUpdateEntity()
@@ -39,8 +38,7 @@ public class MessageRelayService {
         List<OutboxCustomerUpdateEntity> entities = updateRepository.fetchMessages(batchSize);
         entities.forEach(e -> {
             log.info("sending to customer %d".formatted(e.getCustomer().getId()));
-            client.sendNotification(e);
-            updateRepository.delete(e);
+            outboxSender.sendWithDelete(e);
         });
     }
 }
